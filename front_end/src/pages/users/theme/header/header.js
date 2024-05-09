@@ -7,12 +7,13 @@ import { AiFillTwitterSquare } from "react-icons/ai";
 import { AiFillGooglePlusCircle } from "react-icons/ai";
 import { AiOutlineMail } from "react-icons/ai";
 import { AiOutlineShoppingCart } from "react-icons/ai";
+import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlinePhone } from "react-icons/ai";
 import {formatter} from "utils/formatter"
 import {ROUTERS} from "utils/router"
 import {Route, Routes} from "react-router-dom";
 import React, { useState } from 'react';
 const Header = () =>{
-
     const [menus, setMenus] = useState([
         {
             name : "Trang chủ",
@@ -33,6 +34,14 @@ const Header = () =>{
                 },
                 {
                     name : "Trái cây",
+                    path : ""
+                },
+                {
+                    name : "Nước trái cây",
+                    path : ""
+                },
+                {
+                    name : "Trái cây sấy",
                     path : ""
                 }
             ]
@@ -118,6 +127,51 @@ const Header = () =>{
                                     <span>5</span>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="container">
+                <div className="row hero_categories_container">
+                    <div className="col-lg-3 hero_categories" >
+                        <div className="hero_categories_all">
+                            <AiOutlineMenu />
+                            Danh sách sản phẩm
+                        </div>
+                            <ul>
+                                <li>
+                                    <a href="">Rau củ</a>
+                                </li>
+                                <li>
+                                    <a href="">Trái cây</a>
+                                </li>
+                                <li>
+                                    <a href="">Nước trái cây</a>
+                                </li>
+                                <li>
+                                    <a href="">Trái cây sấy</a>
+                                </li>
+                            </ul>
+
+
+                    </div>
+                    <div className="col-lg-9 hero_seach_container">
+                        <div className="hero_seach">
+                            <div className="hero_seach_form">
+                                <form action="">
+                                    <input type="text" name="" value="" placeholder="Bạn đang tìm gì?"/>
+                                    <button type="submit" >Tìm kiếm</button>
+                                </form>
+                            </div>
+                            <div className="hero_seach_phone">
+                                <div className="hero_seach_phone_icon">
+                                    <AiOutlinePhone />
+                                </div>
+                                <div className="hero_seach_phone_text">
+                                    <p>0901.197.448</p>
+                                    <span>Hỗ trợ 24/7</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
