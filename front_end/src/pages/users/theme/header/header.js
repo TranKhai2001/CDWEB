@@ -20,10 +20,6 @@ const Header = () =>{
             path :  ROUTERS.USER.HOME
         },
         {
-            name : "Cửa hàng",
-            path :  ROUTERS.USER.PRODUCT
-        },
-        {
             name : "Sản phẩm",
             path :  ROUTERS.USER.HOME,
             isShowSubmenu: false,
@@ -85,7 +81,7 @@ const Header = () =>{
             </div>
             <div className="container">
                 <div className="row">
-                    <div className="col-xl-3">
+                    <div className="col-lg-3">
                         <div className="header_logo">
                             <h1>My Shop</h1>
                         </div>
@@ -171,6 +167,14 @@ const Header = () =>{
                                     <p>0901.197.448</p>
                                     <span>Hỗ trợ 24/7</span>
                                 </div>
+                            </div>
+                        </div>
+                        <div className="hero_item">
+                            <div className="hero_text">
+                                <span>Trái cây tươi</span>
+                                <h2>Rau quả <br/> sạch 100%</h2>
+                                <p>Miễn phí giao hàng tận nơi</p>
+                                <a href="" className="primary-btn"> Mua ngay</a>
                             </div>
                         </div>
                     </div>

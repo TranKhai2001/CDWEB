@@ -2,7 +2,7 @@ import {ROUTERS} from "./utils/router";
 import HomePage from "./pages/users/homePage/homePage";
 import {Route, Routes} from "react-router-dom";
 import MasterLayout from "./pages/users/theme/masterLayout/masterLayout";
-import ProfilePage from "./pages/users/homePage/profilePage";
+import ProfilePage from "./pages/users/profilePage/profilePage";
 
 
 function renderUserRouter() {
