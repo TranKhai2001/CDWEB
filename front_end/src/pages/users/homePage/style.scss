@@ -150,3 +150,20 @@
     }
   }
 }
+
+@include Responsive($MEDIUM_DEVICE){
+  .container{
+    width: 990px !important;
+  }
+}
+@include Responsive($TABLET_DEVICE){
+  .container {
+    width: 750px !important;
+  }
+
+}
+@include Responsive($WIDE_MOBILE){
+  .categories_slider_item p {
+    left: 0% !important;
+  }
+}
