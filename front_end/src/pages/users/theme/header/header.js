@@ -2,9 +2,9 @@ import {memo} from "react";
 import "./style.scss"
 import {AiFillFacebook, AiOutlineDownCircle, AiOutlineUpCircle} from "react-icons/ai";
 import { AiOutlineInstagram } from "react-icons/ai";
-import { AiOutlineUser } from "react-icons/ai";
 import { AiFillTwitterSquare } from "react-icons/ai";
 import { AiFillGooglePlusCircle } from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
 import { AiOutlineMail } from "react-icons/ai";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { AiOutlineMenu } from "react-icons/ai";
