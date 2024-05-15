@@ -5,6 +5,9 @@ import MasterLayout from "./pages/users/theme/masterLayout/masterLayout";
 import ProfilePage from "./pages/users/profilePage/profilePage";
 import LoginPage from "./pages/users/loginPage/loginPage";
 import RegisterPage from "./pages/users/registerPage/registerPage";
+import DetailProduct from "./pages/users/detailProduct/detailProduct";
+import Cart from "./pages/users/cart/cart";
+import Pay from "./pages/users/pay/pay";
 
 
 function renderUserRouter() {
@@ -25,6 +28,21 @@ function renderUserRouter() {
         {
             path : ROUTERS.USER.REGISTER,
             component : <RegisterPage/>,
+        }
+        ,
+        {
+            path : ROUTERS.USER.DETAILPRODUCT,
+            component : <DetailProduct/>,
+        }
+        ,
+        {
+            path : ROUTERS.USER.CART,
+            component : <Cart/>,
+        }
+        ,
+        {
+            path : ROUTERS.USER.PAY,
+            component : <Pay/>,
         }
     ]
     return (
