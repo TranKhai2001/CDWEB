@@ -13,6 +13,10 @@ const Register = () => {
                         <input type="email" id="email" name="email" required />
                     </div>
                     <div className="form-group">
+                        <label htmlFor="fullname">Họ và tên:</label>
+                        <input type="text" id="fullname" name="fullname" required />
+                    </div>
+                    <div className="form-group">
                         <label htmlFor="phone">Số điện thoại:</label>
                         <input type="tel" id="phone" name="phone" required />
                     </div>
