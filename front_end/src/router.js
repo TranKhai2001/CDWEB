@@ -3,6 +3,8 @@ import HomePage from "./pages/users/homePage/homePage";
 import {Route, Routes} from "react-router-dom";
 import MasterLayout from "./pages/users/theme/masterLayout/masterLayout";
 import ProfilePage from "./pages/users/profilePage/profilePage";
+import LoginPage from "./pages/users/loginPage/loginPage";
+import RegisterPage from "./pages/users/registerPage/registerPage";
 
 
 function renderUserRouter() {
@@ -14,6 +16,15 @@ function renderUserRouter() {
         {
             path : ROUTERS.USER.PROFILE,
             component : <ProfilePage/>,
+        },
+        {
+            path : ROUTERS.USER.LOGIN,
+            component : <LoginPage/>,
+        }
+        ,
+        {
+            path : ROUTERS.USER.REGISTER,
+            component : <RegisterPage/>,
         }
     ]
     return (
