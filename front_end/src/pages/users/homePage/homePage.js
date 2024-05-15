@@ -1,7 +1,8 @@
 import {memo} from "react";
+import "./style.scss";
 import Carousel from 'react-multi-carousel';
 import "react-multi-carousel/lib/styles.css";
-import "./style.scss"
+
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 
