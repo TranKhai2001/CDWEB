@@ -7,6 +7,7 @@ export const ROUTERS = {
         REGISTER: "dang-ky",
         DETAILPRODUCT:"chi-tiet-san-pham",
         CART: "gio-hang",
-        PAY: "thanh-toan"
+        PAY: "thanh-toan",
+        ORDERCONFIRM:"xac-nhan-don-hang"
     }
 }
