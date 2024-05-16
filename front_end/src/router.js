@@ -8,6 +8,7 @@ import RegisterPage from "./pages/users/registerPage/registerPage";
 import DetailProduct from "./pages/users/detailProduct/detailProduct";
 import Cart from "./pages/users/cart/cart";
 import Pay from "./pages/users/pay/pay";
+import OderConfirrm from "./pages/users/oderConfirm/oderConfirrm";
 
 
 function renderUserRouter() {
@@ -43,6 +44,11 @@ function renderUserRouter() {
         {
             path : ROUTERS.USER.PAY,
             component : <Pay/>,
+        }
+        ,
+        {
+            path : ROUTERS.USER.ORDERCONFIRM,
+            component : <OderConfirrm/>,
         }
     ]
     return (

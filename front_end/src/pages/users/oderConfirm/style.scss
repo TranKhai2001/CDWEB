@@ -1,0 +1,102 @@
+@use "sass:map";
+@import "src/style/pages/theme";
+@import "src/style/pages/all";
+@import "src/style/pages/bootstrap";
+
+span{
+  font-size: 14px;
+}
+.col-md-8{
+  margin:20px auto;
+  width: 700px;
+}
+
+.invoice {
+  border: 2px solid #eeeeeea8;
+}
+
+.logo {
+  background-color: #eeeeeea8;
+  img{
+    width: 75px;
+  }
+}
+
+.totals tr td {
+  font-size: 13px;
+}
+
+.footer {
+  background-color: #eeeeeea8;
+
+  span {
+    font-size: 12px;
+  }
+}
+
+.product-qty span {
+  font-size: 12px;
+  color: #dedbdb;
+
+  .table-borderless tbdy tr {
+    td{
+      width: 20%;
+      .py-2{
+        .d-block{
+          color: black;
+        }
+      }
+    }
+  }
+}
+
+.Name-Page {
+  height: 160px;
+  width: 100%;
+
+  > img {
+    width: 100%;
+    height: 160px;
+    position: absolute;
+  }
+}
+
+.Name {
+  color: white;
+  text-align: center;
+  margin: 0px;
+  line-height: 160px;
+  position: relative;
+}
+.Frame {
+  width: 80%;
+  margin: auto;
+}
+.List-Funtions {
+  display: inline-flex;
+
+  > p {
+    padding: 20px;
+    text-decoration: none;
+    color: #1E2024;
+    font-size: 20px;
+  }
+
+  a {
+    padding: 20px;
+    text-decoration: none;
+    color: #1E2024;
+    font-size: 20px;
+  }
+
+
+}
+
+.img-product{
+  margin-top: -8px;
+  width: 50px;
+  border: 2px solid #7A7474FF;
+}
+.justify-content-end{
+  justify-content: flex-end;
+}
