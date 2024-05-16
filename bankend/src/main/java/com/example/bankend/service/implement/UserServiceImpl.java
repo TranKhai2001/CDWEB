@@ -16,19 +16,17 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;
 
-
     @Autowired
     private HttpSession session;
-
 
     @Override
     public User login(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.getUsername());
         if (user != null && user.getPassword().equals(loginDto.getPassword())) {
-
             session.setAttribute("user", user);
-
-
-
+            return user;
+        }
+        return null;
+    }
 }
 
