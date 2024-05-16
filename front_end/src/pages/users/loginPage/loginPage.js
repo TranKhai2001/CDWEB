@@ -24,11 +24,17 @@ const Login = () => {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formData)
-            });
+
+                body: JSON.stringify(formData),
+                credentials: 'include' // Gửi cookie cùng với yêu cầu
+
 
             if (response.ok) {
                 navigate('/');
+
+                window.location.reload();
+
+
             } else {
                 setError('Đăng nhập thất bại');
             }
