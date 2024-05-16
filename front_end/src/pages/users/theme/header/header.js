@@ -1,4 +1,4 @@
-import {memo} from "react";
+import {memo, useEffect} from "react";
 import "./style.scss"
 import {AiFillFacebook, AiOutlineDownCircle, AiOutlineUpCircle} from "react-icons/ai";
 import { AiOutlineInstagram } from "react-icons/ai";
@@ -11,11 +11,49 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { AiOutlinePhone } from "react-icons/ai";
 import {formatter} from "utils/formatter"
 import {ROUTERS} from "utils/router"
-import {Route, Routes} from "react-router-dom";
+import {Link, Route, Routes, useNavigate} from "react-router-dom";
 import React, { useState } from 'react';
 import {BiUser} from "react-icons/bi";
 const Header = () =>{
     const [isShowHumberger,setShowHumberger] = useState(false)
+    const [user, setUser] = useState(null); // Lưu trữ thông tin người dùng
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/check-login', {
+                    method: 'GET',
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const userData = await response.json();
+                    setUser(userData); // Cập nhật thông tin người dùng
+                } else {
+                    setUser(null); // Đặt người dùng về null nếu không đăng nhập
+                }
+            } catch (error) {
+                console.error('Lỗi khi kiểm tra đăng nhập:', error);
+            }
+        };
+
+        checkLoginStatus();
+    }, []); // Sử dụng mảng rỗng để đảm bảo useEffect chỉ chạy một lần sau khi render lần đầu tiên
+
+    const handleLogout = async () => {
+        try {
+            const response = await fetch('http://localhost:8080/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+            if (response.ok) {
+                setUser(null); // Đặt người dùng về null sau khi đăng xuất
+            } else {
+                console.error('Đăng xuất không thành công');
+            }
+        } catch (error) {
+            console.error('Lỗi khi đăng xuất:', error);
+        }
+    };
     const [menus, setMenus] = useState([
         {
             name : "Trang chủ",
@@ -131,10 +169,17 @@ const Header = () =>{
                                 <li><a href=""><AiOutlineInstagram /></a></li>
                                 <li><a href=""><AiFillGooglePlusCircle /></a></li>
                                 <li><a href=""><AiFillTwitterSquare /></a></li>
-                                <li>
-                                    <a href=""><AiOutlineUser /></a>
-                                    <span> Đăng nhập</span>
-                                </li>
+                                {/*Hiển thị tên người dùng và link đăng xuất nếu có người đăng nhập */}
+                                {user ? (
+                                    <>
+                                        <li><span>{user.fullName}</span> | <a href="#" onClick={handleLogout}>Đăng xuất</a></li>
+                                    </>
+                                ) : (
+                                    // Hiển thị nút Đăng nhập nếu chưa có người đăng nhập
+                                    <li>
+                                        <Link to={ROUTERS.USER.LOGIN}><AiOutlineUser /> <span> Đăng nhập</span></Link>
+                                    </li>
+                                )}
                             </ul>
                         </div>
                     </div>
