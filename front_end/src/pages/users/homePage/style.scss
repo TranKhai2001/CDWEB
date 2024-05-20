@@ -8,6 +8,7 @@
     margin-top: 30px;
     .categories_slider_item{
       height: 400px;
+      max-width: 300px;
       display: block;
       position: relative;
       background-repeat: no-repeat;
@@ -95,6 +96,7 @@
       overflow: hidden;
       background-position: center;
       background-repeat: no-repeat;
+      background-size: cover;
       &:hover{
         border: 1px solid map.get($theme-colors,"main");
       }
