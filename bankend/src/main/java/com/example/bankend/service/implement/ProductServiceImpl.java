@@ -39,7 +39,6 @@ public class ProductServiceImpl implements ProductService {
         productDTO.setDescription(product.getDescription());
         productDTO.setPrice(product.getPrice());
         productDTO.setQuantityAvailable(product.getQuantityAvailable());
-        productDTO.setCategoryId(product.getCategory().getCategoryId());
         productDTO.setCategoryName(product.getCategory().getName());
         productDTO.setImageUrl(product.getImageUrl());
         productDTO.setWeight(product.getWeight());
