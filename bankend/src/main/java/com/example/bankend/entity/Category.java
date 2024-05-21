@@ -27,7 +27,4 @@ public class Category {
     @Column(name = "status", nullable = false)
     private CategoryStatus status;
 
-//    // Các sản phẩm thuộc danh mục này
-//    @OneToMany(mappedBy = "category")
-//    private List<Product> products;
 }

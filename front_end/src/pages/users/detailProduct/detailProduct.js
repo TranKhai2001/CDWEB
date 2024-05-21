@@ -1,12 +1,30 @@
-import React, {memo} from "react";
+import React, { memo, useEffect, useState } from "react";
 import "./style.scss";
-import {AiFillFacebook} from "react-icons/ai";
+import { AiFillFacebook } from "react-icons/ai";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { AiFillTwitterSquare } from "react-icons/ai";
 import { AiFillGooglePlusCircle } from "react-icons/ai";
-import Item1 from "assets/users/image/trai_cay/dau_tay.jpg";
-import {formatter} from "../../../utils/formatter";
-const DetailProduct = () =>{
+import { formatter } from "../../../utils/formatter";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+
+const DetailProduct = () => {
+    const { productId } = useParams();
+    const [product, setProduct] = useState(null);
+
+    useEffect(() => {
+        // Fetch product details from the backend API
+        axios.get(`http://localhost:8080/api/products/${productId}`)
+            .then(response => {
+                setProduct(response.data);
+            })
+            .catch(error => {
+                console.error("There was an error fetching the product details!", error);
+            });
+    }, [productId]);
+
+    if (!product) return <div>Loading...</div>;
+
     return (
         <div className="product-details">
             <div className="container">
@@ -14,18 +32,15 @@ const DetailProduct = () =>{
                     <div className="col-lg-6 col-md-6">
                         <div className="product__details__pic">
                             <div className="product__details__pic__item">
-                                <img className="product__details__pic__item--large"
-                                     src={Item1} alt=""/>
+                                <img className="product__details__pic__item--large" src={product.imageUrl} alt={product.name} />
                             </div>
                         </div>
                     </div>
                     <div className="col-lg-6 col-md-6">
                         <div className="product__details__text">
-                            <h3>Dâu tây</h3>
-                            <div className="product__details__price">{formatter(100000)}</div>
-                            <p>Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a. Vestibulum ac diam sit amet quam
-                                vehicula elementum sed sit amet dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet
-                                quam vehicula elementum sed sit amet dui. Proin eget tortor risus.</p>
+                            <h3>{product.name}</h3>
+                            <div className="product__details__price">{formatter(product.price)}</div>
+                            <p>{product.description}</p>
                             <div className="product__details__quantity">
                                 <div className="quantity">
                                     <div className="pro-qty">
@@ -35,8 +50,9 @@ const DetailProduct = () =>{
                             </div>
                             <a href="#" className="primary-btn">Thêm vào giỏ hàng</a>
                             <ul>
-                                <li><b>Trạng thái:</b> <span>còn hàng</span></li>
-                                <li><b>Trọng lượng:</b> <span>0.5 kg</span></li>
+                                <li><b>Loại:</b> <span>{product.categoryName}</span></li>
+                                <li><b>Số lượng còn lại:</b> <span>{product.quantityAvailable}</span></li>
+                                <li><b>Trọng lượng:</b> <span>{product.weight} {product.unit}</span></li>
                                 <li><b>Share on</b>
                                     <div className="share">
                                         <a href=""><AiFillFacebook /></a>
@@ -53,4 +69,5 @@ const DetailProduct = () =>{
         </div>
     );
 }
+
 export default memo(DetailProduct);
