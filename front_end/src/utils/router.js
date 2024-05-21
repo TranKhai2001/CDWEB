@@ -5,7 +5,7 @@ export const ROUTERS = {
         PRODUCT: "San-pham",
         LOGIN: "dang-nhap",
         REGISTER: "dang-ky",
-        DETAILPRODUCT:"chi-tiet-san-pham",
+        DETAILPRODUCT: "chi-tiet-san-pham/:productId",
         CART: "gio-hang",
         PAY: "thanh-toan",
         ORDERCONFIRM:"xac-nhan-don-hang"
