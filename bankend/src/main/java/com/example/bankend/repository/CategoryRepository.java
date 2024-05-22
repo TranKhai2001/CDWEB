@@ -10,5 +10,7 @@ import java.util.List;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
+
     List<Category> findAllByStatus(CategoryStatus status);
+
 }

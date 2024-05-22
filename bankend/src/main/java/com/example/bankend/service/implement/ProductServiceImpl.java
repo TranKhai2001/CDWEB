@@ -55,7 +55,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
-
     private ProductDTO convertToDto(Product product) {
         return new ProductDTO(
                 product.getProductId(),

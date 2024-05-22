@@ -12,7 +12,9 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+
     @Query("SELECT p FROM Product p WHERE p.status = :productStatus AND p.category.status = :categoryStatus")
     List<Product> findAllByProductStatusAndCategoryStatus(@Param("productStatus") ProductStatus productStatus, @Param("categoryStatus") CategoryStatus categoryStatus);
+
 
 }
