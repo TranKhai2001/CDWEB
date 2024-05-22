@@ -17,11 +17,13 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+
     @GetMapping("/admin")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         List<CategoryDTO> categories = categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
+
     @GetMapping
     public ResponseEntity<List<CategoryDTO>> getActiveCategories() {
         List<CategoryDTO> categories = categoryService.getActiveCategories();
