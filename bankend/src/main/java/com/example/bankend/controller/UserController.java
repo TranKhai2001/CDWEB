@@ -20,16 +20,15 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @PostMapping("/login")
 
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpSession session) {
         User user = userService.login(loginDto);
         if (user != null) {
             session.setAttribute("user", user);
-
             return new ResponseEntity<>("Login successful", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Invalid username or password", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Invalid username or password or account is not active", HttpStatus.UNAUTHORIZED);
         }
     }
 

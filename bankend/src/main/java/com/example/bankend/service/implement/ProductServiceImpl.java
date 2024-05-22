@@ -1,7 +1,9 @@
 package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.ProductDTO;
+import com.example.bankend.entity.CategoryStatus;
 import com.example.bankend.entity.Product;
+import com.example.bankend.entity.ProductStatus;
 import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.service.ProductService;
 import org.slf4j.Logger;
@@ -32,6 +34,15 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public List<ProductDTO> getActiveProducts() {
+        logger.info("Fetching active products");
+        List<Product> products = productRepository.findAllByProductStatusAndCategoryStatus(ProductStatus.ACTIVE, CategoryStatus.ACTIVE);
+        return products.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public ProductDTO getProductById(Long productId) {
         logger.info("Fetching product with ID: {}", productId);
         Optional<Product> optionalProduct = productRepository.findById(productId);
@@ -42,6 +53,7 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
     }
+
 
     private ProductDTO convertToDto(Product product) {
         return new ProductDTO(
