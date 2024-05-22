@@ -3,7 +3,6 @@ package com.example.bankend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
 
 
 @Entity

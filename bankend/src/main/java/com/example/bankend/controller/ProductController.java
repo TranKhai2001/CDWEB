@@ -22,9 +22,15 @@ public class ProductController {
         this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping("/admin")
     public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<ProductDTO> products = productService.getAllProducts();
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ProductDTO>> getActiveProducts() {
+        List<ProductDTO> products = productService.getActiveProducts();
         return ResponseEntity.ok(products);
     }
 
