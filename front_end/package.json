@@ -13,8 +13,9 @@
     "react-icons": "^5.2.1",
     "react-multi-carousel": "^2.8.5",
     "react-router-dom": "^6.23.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-tabs": "^6.0.2",
+    "start": "^5.1.0",
     "url": "^0.11.3",
     "web-vitals": "^2.1.4"
   },
