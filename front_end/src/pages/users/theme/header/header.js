@@ -14,6 +14,7 @@ import {ROUTERS} from "utils/router"
 import {Link, Route, Routes, useNavigate} from "react-router-dom";
 import React, { useState } from 'react';
 import {BiUser} from "react-icons/bi";
+import SearchBar from "./searchBar";
 const Header = () =>{
     const [isShowHumberger,setShowHumberger] = useState(false)
     const [user, setUser] = useState(null); // Lưu trữ thông tin người dùng
@@ -262,12 +263,13 @@ const Header = () =>{
                     </div>
                     <div className="col-lg-9  col-md-12 col-sm-12 col-sm-12 hero_seach_container">
                         <div className="hero_seach ">
-                            <div className="hero_seach_form">
-                                <form action="">
-                                    <input type="text" name="" value="" placeholder="Bạn đang tìm gì?"/>
-                                    <button type="submit" >Tìm kiếm</button>
-                                </form>
-                            </div>
+                            {/*<div className="hero_seach_form">*/}
+                            {/*    <form action="">*/}
+                            {/*        <input type="text" name="" value="" placeholder="Bạn đang tìm gì?"/>*/}
+                            {/*        <button type="submit" >Tìm kiếm</button>*/}
+                            {/*    </form>*/}
+                            {/*</div>*/}
+                            <SearchBar></SearchBar>
                             <div className="hero_seach_phone">
                                 <div className="hero_seach_phone_icon">
                                     <AiOutlinePhone />
