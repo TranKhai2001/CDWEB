@@ -37,6 +37,23 @@ const HomePage = () => {
             });
     }, []);
 
+    const handleAddToCart = (productId) => {
+        const cartItem = {
+            productId: productId,
+            quantity: 1,
+            price: products.find(product => product.productId === productId).price
+        };
+
+        axios.post('http://localhost:8080/api/cart/add', cartItem, { withCredentials: true })
+            .then(response => {
+                alert("Product added to cart successfully!");
+            })
+            .catch(error => {
+                console.error("There was an error adding the product to the cart!", error);
+                alert("Failed to add product to cart.");
+            });
+    };
+
     const responsive = {
         superLargeDesktop: {
             breakpoint: { max: 4000, min: 3000 },
@@ -65,7 +82,7 @@ const HomePage = () => {
                             <li onClick={() => navigate(`/chi-tiet-san-pham/${item.productId}`)}>
                                 <AiOutlineEye />
                             </li>
-                            <li>
+                            <li onClick={() => handleAddToCart(item.productId)}>
                                 <AiOutlineShoppingCart />
                             </li>
                         </ul>
