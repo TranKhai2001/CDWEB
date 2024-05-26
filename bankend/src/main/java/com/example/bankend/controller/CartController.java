@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/cart")
 public class CartController {
@@ -29,6 +31,17 @@ public class CartController {
             return new ResponseEntity<>("Product added to cart", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/total-quantity")
+    public ResponseEntity<Integer> getTotalQuantity(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            int totalQuantity = cartService.getTotalQuantity(user);
+            return new ResponseEntity<>(totalQuantity, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(0, HttpStatus.UNAUTHORIZED);
         }
     }
 }
