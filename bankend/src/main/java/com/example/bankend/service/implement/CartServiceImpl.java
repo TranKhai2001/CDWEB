@@ -1,6 +1,7 @@
 package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.CartItemDTO;
+import com.example.bankend.dto.CartItemDetailDTO;
 import com.example.bankend.entity.Cart;
 import com.example.bankend.entity.CartItem;
 import com.example.bankend.entity.Product;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CartServiceImpl implements CartService {
@@ -79,4 +81,57 @@ public class CartServiceImpl implements CartService {
         return 0;
     }
 
+    @Override
+    public List<CartItemDetailDTO> getCartDetails(User user) {
+        Optional<Cart> optionalCart = cartRepository.findByUserAndStatus(user, Cart.CartStatus.ACTIVE);
+        if (optionalCart.isPresent()) {
+            Cart cart = optionalCart.get();
+            return cart.getItems().stream().map(cartItem -> {
+                Product product = cartItem.getProduct();
+                return new CartItemDetailDTO(
+                        product.getProductId(),
+                        product.getName(),
+                        product.getImageUrl(),
+                        cartItem.getQuantity(),
+                        cartItem.getPrice()
+                );
+            }).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public void updateCartItemQuantity(User user, CartItemDTO cartItemDTO) {
+        Optional<Cart> optionalCart = cartRepository.findByUserAndStatus(user, Cart.CartStatus.ACTIVE);
+        if (optionalCart.isPresent()) {
+            Cart cart = optionalCart.get();
+            for (CartItem cartItem : cart.getItems()) {
+                if (cartItem.getProduct().getProductId().equals(cartItemDTO.getProductId())) {
+                    cartItem.setQuantity(cartItemDTO.getQuantity());
+                    cartItemRepository.save(cartItem);
+                    break;
+                }
+            }
+        } else {
+            throw new IllegalArgumentException("Active cart not found for user");
+        }
+    }
+
+    @Override
+    public void removeCartItem(User user, Long productId) {
+        Optional<Cart> optionalCart = cartRepository.findByUserAndStatus(user, Cart.CartStatus.ACTIVE);
+        if (optionalCart.isPresent()) {
+            Cart cart = optionalCart.get();
+            Optional<CartItem> cartItemOpt = cart.getItems().stream()
+                    .filter(cartItem -> cartItem.getProduct().getProductId().equals(productId))
+                    .findFirst();
+            if (cartItemOpt.isPresent()) {
+                CartItem cartItem = cartItemOpt.get();
+                cart.getItems().remove(cartItem);
+                cartItemRepository.delete(cartItem);
+            }
+        } else {
+            throw new IllegalArgumentException("Active cart not found for user");
+        }
+    }
 }

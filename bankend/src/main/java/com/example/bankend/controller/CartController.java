@@ -1,6 +1,7 @@
 package com.example.bankend.controller;
 
 import com.example.bankend.dto.CartItemDTO;
+import com.example.bankend.dto.CartItemDetailDTO;
 import com.example.bankend.entity.CartItem;
 import com.example.bankend.entity.User;
 import com.example.bankend.service.CartService;
@@ -42,6 +43,38 @@ public class CartController {
             return new ResponseEntity<>(totalQuantity, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(0, HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/details")
+    public ResponseEntity<List<CartItemDetailDTO>> getCartDetails(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            List<CartItemDetailDTO> cartDetails = cartService.getCartDetails(user);
+            return new ResponseEntity<>(cartDetails, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateCartItemQuantity(@RequestBody CartItemDTO cartItemDTO, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            cartService.updateCartItemQuantity(user, cartItemDTO);
+            return new ResponseEntity<>("Cart item updated", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
+        }
+    }
+    @DeleteMapping("/remove")
+    public ResponseEntity<String> removeCartItem(@RequestParam Long productId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            cartService.removeCartItem(user, productId);
+            return new ResponseEntity<>("Product removed from cart", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
         }
     }
 }
