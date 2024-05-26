@@ -1,14 +1,24 @@
 import React, { memo, useState, useEffect } from 'react';
-import "./style.scss";
-import { AiOutlineShoppingCart, AiOutlineUser, AiOutlineMail, AiOutlineMenu, AiFillFacebook, AiOutlineInstagram, AiFillTwitterSquare, AiFillGooglePlusCircle, AiOutlinePhone } from "react-icons/ai";
+import "./style.scss"
+import {AiFillFacebook, AiOutlineDownCircle, AiOutlineUpCircle} from "react-icons/ai";
+import { AiOutlineInstagram } from "react-icons/ai";
+import { AiFillTwitterSquare } from "react-icons/ai";
+import { AiFillGooglePlusCircle } from "react-icons/ai";
+import { AiOutlineUser } from "react-icons/ai";
+import { AiOutlineMail } from "react-icons/ai";
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import { AiOutlineMenu } from "react-icons/ai";
+import { AiOutlinePhone } from "react-icons/ai";
 import { BiUser } from "react-icons/bi";
-import { formatter } from "utils/formatter";
-import { ROUTERS } from "utils/router";
-import { Link } from "react-router-dom";
-
-const Header = () => {
-    const [isShowHumberger, setShowHumberger] = useState(false);
-    const [user, setUser] = useState(null);
+import {formatter} from "utils/formatter"
+import {ROUTERS} from "utils/router"
+import {Link, Route, Routes, useNavigate} from "react-router-dom";
+import React, { useState } from 'react';
+import {BiUser} from "react-icons/bi";
+import SearchBar from "./searchBar";
+const Header = () =>{
+    const [isShowHumberger,setShowHumberger] = useState(false)
+    const [user, setUser] = useState(null); // Lưu trữ thông tin người dùng
     const [cartQuantity, setCartQuantity] = useState(0);
 
     useEffect(() => {
@@ -272,12 +282,15 @@ const Header = () => {
                     </div>
                     <div className="col-lg-9  col-md-12 col-sm-12 col-sm-12 hero_seach_container">
                         <div className="hero_seach ">
-                            <div className="hero_seach_form">
-                                <form action="">
-                                    <input type="text" name="" value="" placeholder="Bạn đang tìm gì?" />
-                                    <button type="submit" >Tìm kiếm</button>
-                                </form>
-                            </div>
+
+                            {/*<div className="hero_seach_form">*/}
+                            {/*    <form action="">*/}
+                            {/*        <input type="text" name="" value="" placeholder="Bạn đang tìm gì?"/>*/}
+                            {/*        <button type="submit" >Tìm kiếm</button>*/}
+                            {/*    </form>*/}
+                            {/*</div>*/}
+                            <SearchBar></SearchBar>
+                            
                             <div className="hero_seach_phone">
                                 <div className="hero_seach_phone_icon">
                                     <AiOutlinePhone />
