@@ -1,79 +1,182 @@
-import {memo} from "react";
-import "./style.scss";
+import React, { useState, useEffect, memo } from 'react';
+import axios from 'axios';
 import { FaRegWindowMinimize } from "react-icons/fa";
-const Cart = () =>{
-    return <>
+import "./style.scss";
+import { Link } from "react-router-dom";
+import { ROUTERS } from "../../../utils/router";
+
+// Hàm gọi API lấy thông tin giỏ hàng
+const getCartDetails = async () => {
+    const API_URL = 'http://localhost:8080/api/cart/details'; // Đổi thành URL backend của bạn
+    try {
+        const response = await axios.get(API_URL, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch cart details:', error);
+        throw error;
+    }
+};
+
+// Hàm gọi API cập nhật số lượng sản phẩm trong giỏ hàng
+const updateCartItemQuantity = async (cartItemDTO) => {
+    const API_URL = 'http://localhost:8080/api/cart/update'; // Đổi thành URL backend của bạn
+    try {
+        await axios.put(API_URL, cartItemDTO, { withCredentials: true });
+    } catch (error) {
+        console.error('Failed to update cart item quantity:', error);
+        throw error;
+    }
+};
+
+// Hàm gọi API xóa sản phẩm trong giỏ hàng
+const removeCartItem = async (productId) => {
+    const API_URL = `http://localhost:8080/api/cart/remove?productId=${productId}`; // Đổi thành URL backend của bạn
+    try {
+        await axios.delete(API_URL, { withCredentials: true });
+    } catch (error) {
+        console.error('Failed to remove cart item:', error);
+        throw error;
+    }
+};
+
+const Cart = () => {
+    const [cartItems, setCartItems] = useState([]);
+    const [total, setTotal] = useState(0);
+
+    useEffect(() => {
+        const fetchCartDetails = async () => {
+            try {
+                const data = await getCartDetails();
+                setCartItems(data);
+                calculateTotal(data);
+            } catch (error) {
+                console.error('Error fetching cart details:', error);
+            }
+        };
+
+        fetchCartDetails();
+    }, []);
+
+    const calculateTotal = (items) => {
+        const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+        setTotal(totalAmount);
+    };
+
+    const handleQuantityChange = async (productId, newQuantity) => {
+        const updatedItems = cartItems.map(item => {
+            if (item.productId === productId) {
+                return { ...item, quantity: newQuantity };
+            }
+            return item;
+        });
+        setCartItems(updatedItems);
+        calculateTotal(updatedItems);
+
+        const cartItemDTO = { productId, quantity: newQuantity };
+        try {
+            await updateCartItemQuantity(cartItemDTO);
+        } catch (error) {
+            console.error('Error updating cart item quantity:', error);
+        }
+    };
+
+    const handleRemoveCartItem = async (productId, event) => {
+        event.preventDefault();
+        try {
+            await removeCartItem(productId);
+            const updatedItems = cartItems.filter(item => item.productId !== productId);
+            setCartItems(updatedItems);
+            calculateTotal(updatedItems);
+        } catch (error) {
+            console.error('Error removing cart item:', error);
+        }
+    };
+
+    return (
         <div className="container">
-            <div class="cart-section mt-150 mb-150">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-9 col-xl-12 col-md-12 col-sm-12">
-                            <div class="cart-table-wrap">
-                                <table class="cart-table">
-                                    <thead class="cart-table-head">
-                                    <tr class="table-head-row">
-                                        <th class="product-remove">Xóa</th>
-                                        <th class="product-image">Ảnh minh họa</th>
-                                        <th class="product-name">Tên</th>
-                                        <th class="product-price">Giá</th>
-                                        <th class="product-quantity">Số lượng</th>
-                                        <th class="product-total">Tổng cộng</th>
+            <div className="cart-section mt-150 mb-150">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-lg-9 col-xl-12 col-md-12 col-sm-12">
+                            <div className="cart-table-wrap">
+                                <table className="cart-table">
+                                    <thead className="cart-table-head">
+                                    <tr className="table-head-row">
+                                        <th className="product-remove">Xóa</th>
+                                        <th className="product-image">Ảnh minh họa</th>
+                                        <th className="product-name">Tên</th>
+                                        <th className="product-price">Giá</th>
+                                        <th className="product-quantity">Số lượng</th>
+                                        <th className="product-total">Tổng cộng</th>
                                     </tr>
                                     </thead>
-                                    <tbody >
-                                    <tr class="table-body-row">
-                                        <td class="product-remove"><a><FaRegWindowMinimize /></a></td>
-                                    <td class="product-image"></td>
-                                    <td class="product-name"></td>
-                                    <td class="product-price"></td>
-                                    <td class="product-quantity"><input type="number"/></td>
-                                    <td class="product-total"></td>
-                                </tr>
-                            </tbody>
-                            <tbody >
-                            <tr class="table-body-row">
-                            <td colspan="6">không có sản phẩm trong giỏ hàng!</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                    <tbody>
+                                    {cartItems.length > 0 ? (
+                                        cartItems.map(item => (
+                                            <tr className="table-body-row" key={item.productId}>
+                                                <td className="product-remove">
+                                                    <a href="#" onClick={(event) => handleRemoveCartItem(item.productId, event)}>
+                                                        <FaRegWindowMinimize />
+                                                    </a>
+                                                </td>
+                                                <td className="product-image"><img src={item.imageUrl} alt={item.productName} /></td>
+                                                <td className="product-name">{item.productName}</td>
+                                                <td className="product-price">{item.price} VND</td>
+                                                <td className="product-quantity">
+                                                    <input
+                                                        type="number"
+                                                        value={item.quantity}
+                                                        onChange={(e) => handleQuantityChange(item.productId, parseInt(e.target.value))}
+                                                    />
+                                                </td>
+                                                <td className="product-total">{item.price * item.quantity} VND</td>
+                                            </tr>
+                                        ))
+                                    ) : (
+                                        <tr className="table-body-row">
+                                            <td colSpan="6">Không có sản phẩm trong giỏ hàng!</td>
+                                        </tr>
+                                    )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
 
-            <div class="col-lg-3 col-xl-12 col-md-12 col-sm-12">
-                <div class="total-section">
-                    <table class="total-table">
-                        <thead class="total-table-head">
-                        <tr class="table-total-row">
-                            <th>Tất cả</th>
-                            <th>Giá</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr class="total-data">
-                            <td><strong>Tạm tính: </strong></td>
-                            <td>vnd</td>
-                        </tr>
-                        <tr class="total-data">
-                            <td><strong>Phí ship: </strong></td>
-                            <td>vnd</td>
-                        </tr>
-                        <tr class="total-data">
-                            <td><strong>Tổng cộng: </strong></td>
-                            <td>vnd</td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="cart-buttons">
-                        <a routerLink="/products" routerLinkActive="active" class="boxed-btn">Tiếp tục mua</a>
-                        <a routerLink="/pay" routerLinkActive="active" class="boxed-btn black">Đặt hàng</a>
+                        <div className="col-lg-3 col-xl-12 col-md-12 col-sm-12">
+                            <div className="total-section">
+                                <table className="total-table">
+                                    <thead className="total-table-head">
+                                    <tr className="table-total-row">
+                                        <th>Tất cả</th>
+                                        <th>Giá</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr className="total-data">
+                                        <td><strong>Tạm tính: </strong></td>
+                                        <td>{total} VND</td>
+                                    </tr>
+                                    <tr className="total-data">
+                                        <td><strong>Phí ship: </strong></td>
+                                        <td>0 VND</td> {/* Thay đổi nếu có phí ship */}
+                                    </tr>
+                                    <tr className="total-data">
+                                        <td><strong>Tổng cộng: </strong></td>
+                                        <td>{total} VND</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div className="cart-buttons">
+                                    <a href="/" className="boxed-btn">Tiếp tục mua</a>
+                                    <a href="/pay" className="boxed-btn black">Đặt hàng</a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
-</div>
-    </>;
+    );
 }
+
 export default memo(Cart);
