@@ -13,8 +13,6 @@ import { BiUser } from "react-icons/bi";
 import {formatter} from "utils/formatter"
 import {ROUTERS} from "utils/router"
 import {Link, Route, Routes, useNavigate} from "react-router-dom";
-import React, { useState } from 'react';
-import {BiUser} from "react-icons/bi";
 import SearchBar from "./searchBar";
 const Header = () =>{
     const [isShowHumberger,setShowHumberger] = useState(false)
