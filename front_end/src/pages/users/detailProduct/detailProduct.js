@@ -6,11 +6,12 @@ import { AiFillTwitterSquare } from "react-icons/ai";
 import { AiFillGooglePlusCircle } from "react-icons/ai";
 import { formatter } from "../../../utils/formatter";
 import axios from "axios";
-import { useParams } from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 
 const DetailProduct = () => {
     const { productId } = useParams();
-    const [product, setProduct] = useState(null);
+    const [product, setProduct] = useState();
+    const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
         // Fetch product details from the backend API
@@ -22,6 +23,22 @@ const DetailProduct = () => {
                 console.error("There was an error fetching the product details!", error);
             });
     }, [productId]);
+    const handleAddToCart =  (productId) => {
+        const cartItem = {
+            productId: productId,
+            quantity,
+            price: product.price
+        };
+
+        axios.post('http://localhost:8080/api/cart/add', cartItem, { withCredentials: true })
+            .then(response => {
+                alert("Product added to cart successfully!");
+            })
+            .catch(error => {
+                console.error("There was an error adding the product to the cart!", error);
+                alert("Failed to add product to cart.");
+            });
+    };
 
     if (!product) return <div>Loading...</div>;
 
@@ -44,11 +61,17 @@ const DetailProduct = () => {
                             <div className="product__details__quantity">
                                 <div className="quantity">
                                     <div className="pro-qty">
-                                        <input type="number" value="1" />
+                                        số lượng:
+                                        <input
+                                            type="number"
+                                            value={quantity}
+                                            onChange={(e) => setQuantity(Number(e.target.value))}
+                                            min="1"
+                                        />
                                     </div>
                                 </div>
                             </div>
-                            <a href="#" className="primary-btn">Thêm vào giỏ hàng</a>
+                            <a href="#" className="primary-btn" onClick={() => handleAddToCart(productId)}>Thêm vào giỏ hàng</a>
                             <ul>
                                 <li><b>Loại:</b> <span>{product.categoryName}</span></li>
                                 <li><b>Số lượng còn lại:</b> <span>{product.quantityAvailable}</span></li>
