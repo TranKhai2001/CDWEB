@@ -2,7 +2,7 @@ import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 import { FaRegWindowMinimize } from "react-icons/fa";
 import "./style.scss";
-import { Link } from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import { ROUTERS } from "../../../utils/router";
 
 // Hàm gọi API lấy thông tin giỏ hàng
@@ -42,7 +42,7 @@ const removeCartItem = async (productId) => {
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
-
+    const navige = useNavigate()
     useEffect(() => {
         const fetchCartDetails = async () => {
             try {
@@ -168,7 +168,7 @@ const Cart = () => {
                                 </table>
                                 <div className="cart-buttons">
                                     <a href="/" className="boxed-btn">Tiếp tục mua</a>
-                                    <a href="/pay" className="boxed-btn black">Đặt hàng</a>
+                                    <a href="/thanh-toan" className="boxed-btn black">Đặt hàng</a>
                                 </div>
                             </div>
                         </div>

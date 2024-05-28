@@ -1,8 +1,46 @@
-import {memo} from "react";
+import {memo, useEffect, useState} from "react";
 import "./style.scss";
 import Item1 from "assets/users/image/trai_cay/dau_tay.jpg";
 import {formatter} from "../../../utils/formatter";
+import axios from "axios";
+import {useNavigate} from "react-router-dom";
+
+const getCartDetails = async () => {
+    const API_URL = 'http://localhost:8080/api/cart/details'; // Đổi thành URL backend của bạn
+    try {
+        const response = await axios.get(API_URL, { withCredentials: true });
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch cart details:', error);
+        throw error;
+    }
+};
 const OrderConfirm = () =>{
+
+    const [cartItems, setCartItems] = useState([]);
+    const [total, setTotal] = useState(0);
+    const shinpMonney = 10000;
+    useEffect(() => {
+        const fetchCartDetails = async () => {
+            try {
+                const data = await getCartDetails();
+                setCartItems(data);
+            } catch (error) {
+                console.error('Error fetching cart details:', error);
+            }
+        };
+
+        fetchCartDetails();
+    }, []);
+
+    useEffect(() => {
+        let totalAmount = 0;
+        cartItems.forEach(item => {
+            totalAmount += item.price * item.quantity;
+        });
+        setTotal(totalAmount);
+    }, [cartItems]);
+
     return (
         <div class="container mt-5 mb-5">
             <div class="row d-flex justify-content-center">
@@ -33,16 +71,24 @@ const OrderConfirm = () =>{
                             </div>
                             <div class="product border-bottom table-responsive">
                                 <table class="table table-borderless">
-                                    <tbody >
-                                    <tr>
-                                        <td style={{ width: '20%'  }}> <img src={Item1} className="img-product"/> </td>
-                                        <td style={{ width: '40%' }}> <span class="font-weight-bold"></span>
-                                            <div class="product-qty"> <span class="d-block" style={{color:`black`,fontSize:`14px`}} >Số lượng:11</span></div>
-                                        </td>
-                                        <td style={{ width: '20%' }}>
-                                            <div class="text-right"> <span class="font-weight-bold"> {formatter(100000)}</span> </div>
-                                        </td>
-                                    </tr>
+                                    <tbody>
+                                    {cartItems.map((item,index)=>(
+                                        <tr>
+                                            <td><img style={{width: '70px',height:`70px`}} src={item.imageUrl} alt={item.productName} /></td>
+                                            <td>{item.productName}</td>
+                                            <td style={{width: '40%'}}><span className="font-weight-bold"></span>
+                                                <div className="product-qty"><span className="d-block" style={{
+                                                    color: `black`,
+                                                    fontSize: `14px`
+                                                }}>{item.quantity}</span></div>
+                                            </td>
+                                            <td style={{width: '20%'}}>
+                                                <div className="text-right"><span
+                                                    className="font-weight-bold"> {formatter(item.quantity * item.price)}</span></div>
+                                            </td>
+                                        </tr>
+                                    ))}
+
                                 </tbody>
                             </table>
                         </div>
@@ -55,7 +101,7 @@ const OrderConfirm = () =>{
                                             <div class="text-left"> <span class="text-muted">Tạm tính</span> </div>
                                         </td>
                                         <td>
-                                            <div class="text-right"> <span> VNĐ</span> </div>
+                                            <div class="text-right"> <span> {formatter(total)}</span> </div>
                                         </td>
                                     </tr>
                                     <tr>
@@ -63,7 +109,7 @@ const OrderConfirm = () =>{
                                             <div class="text-left"> <span class="text-muted">Phí ship</span> </div>
                                         </td>
                                         <td>
-                                            <div class="text-right"> <span> VNĐ</span> </div>
+                                            <div class="text-right"> <span> {formatter(shinpMonney)}</span> </div>
                                         </td>
                                     </tr>
                                     <tr class="border-top border-bottom">
@@ -71,7 +117,7 @@ const OrderConfirm = () =>{
                                             <div class="text-left"> <span class="font-weight-bold">Tổng cộng</span> </div>
                                         </td>
                                         <td>
-                                            <div class="text-right"> <span class="font-weight-bold"> VNĐ</span> </div>
+                                            <div class="text-right"> <span class="font-weight-bold"> {formatter(total + shinpMonney)}</span> </div>
                                         </td>
                                     </tr>
                                     </tbody>

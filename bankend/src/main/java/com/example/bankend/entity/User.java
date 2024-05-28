@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
+
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
@@ -52,4 +54,5 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false)
     private UserRole role;
+
 }

@@ -44,6 +44,7 @@ const SearchBar = () => {
         product.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+
     return (
         <div className="hero_seach_form">
             <input
@@ -58,7 +59,7 @@ const SearchBar = () => {
             {searchTerm && (
                 <ul className="showItems">
                     {filteredResults.map((product) => (
-                        <li key={product.productId}>
+                        <li className="list-items" key={product.productId} >
                             <Link style={{ textDecoration: 'none' }} to={`/chi-tiet-san-pham/${product.productId}`}>
                                 {product.name}
                             </Link>
