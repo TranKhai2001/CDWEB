@@ -7,7 +7,7 @@ import { ROUTERS } from "../../../utils/router";
 
 // Hàm gọi API lấy thông tin giỏ hàng
 const getCartDetails = async () => {
-    const API_URL = 'http://localhost:8080/api/cart/details'; // Đổi thành URL backend của bạn
+    const API_URL = 'http://localhost:8080/api/cart/details';
     try {
         const response = await axios.get(API_URL, { withCredentials: true });
         return response.data;
@@ -19,7 +19,7 @@ const getCartDetails = async () => {
 
 // Hàm gọi API cập nhật số lượng sản phẩm trong giỏ hàng
 const updateCartItemQuantity = async (cartItemDTO) => {
-    const API_URL = 'http://localhost:8080/api/cart/update'; // Đổi thành URL backend của bạn
+    const API_URL = 'http://localhost:8080/api/cart/update';
     try {
         await axios.put(API_URL, cartItemDTO, { withCredentials: true });
     } catch (error) {
@@ -30,7 +30,7 @@ const updateCartItemQuantity = async (cartItemDTO) => {
 
 // Hàm gọi API xóa sản phẩm trong giỏ hàng
 const removeCartItem = async (productId) => {
-    const API_URL = `http://localhost:8080/api/cart/remove?productId=${productId}`; // Đổi thành URL backend của bạn
+    const API_URL = `http://localhost:8080/api/cart/remove?productId=${productId}`;
     try {
         await axios.delete(API_URL, { withCredentials: true });
     } catch (error) {

@@ -6,7 +6,7 @@ import axios from "axios";
 import {useNavigate} from "react-router-dom";
 
 const getCartDetails = async () => {
-    const API_URL = 'http://localhost:8080/api/cart/details'; // Đổi thành URL backend của bạn
+    const API_URL = 'http://localhost:8080/api/cart/details';
     try {
         const response = await axios.get(API_URL, { withCredentials: true });
         return response.data;
