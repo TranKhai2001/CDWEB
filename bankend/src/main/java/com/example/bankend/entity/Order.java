@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "`order`")
@@ -30,6 +31,9 @@ public class Order {
     @Column(name = "total_amount", nullable = false)
     private BigDecimal totalAmount;
 
+    @Column(name = "delivery_address", nullable = false)
+    private String deliveryAddress;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private OrderStatus status;
@@ -37,6 +41,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     @Column(name = "payment_status", nullable = false)
     private PaymentStatus paymentStatus;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items;
+
+    @PrePersist
+    protected void onCreate() {
+        this.orderDate = new Timestamp(System.currentTimeMillis());
+    }
 
     public enum OrderStatus {
         PENDING,
