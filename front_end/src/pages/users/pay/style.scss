@@ -118,6 +118,7 @@ a {
   width: 450px;
   margin-left: 25px;
   display: inline-flex;
+
 }
 
 .Infor-Product {
@@ -126,7 +127,7 @@ a {
 }
 
 .Name-Product {
-  margin-left: 20px;
+  margin-left: 30px;
   word-break: break-word;
   width: 200px;
   position: absolute;
@@ -160,7 +161,7 @@ a {
 
 .Price {
   float: right;
-  margin-right: 10px;;
+  margin-right: 50px;
 }
 
 .Button {
@@ -183,6 +184,7 @@ a {
     }
   }
 }
+
 @include Responsive($MEDIUM_DEVICE){
   .container{
     max-width: 960px;
