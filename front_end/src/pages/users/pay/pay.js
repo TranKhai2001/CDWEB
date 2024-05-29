@@ -42,18 +42,26 @@ const Pay = () => {
     }, [cartItems]);
 
     const [userInfo, setUserInfo] = useState({
-        userId: '',
+        fullName: '',
+        phone: ''
     });
 
     useEffect(() => {
         const userFromSession = JSON.parse(sessionStorage.getItem('user'));
-        if (userFromSession && userFromSession.userId) {
-            setUserInfo(prevUserInfo => ({
-                ...prevUserInfo,
-                userId: userFromSession.userId
-            }));
+        if (userFromSession) {
+            setUserInfo({
+                fullName: userFromSession.fullName,
+                phone: userFromSession.phone
+            });
         }
     }, []);
+    const handleUserInfoChange = (e) => {
+        const { name, value } = e.target;
+        setUserInfo(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
+    };
 
     const [city, setCity] = useState('');
     const [district, setDistrict] = useState('');
@@ -63,7 +71,7 @@ const Pay = () => {
     const handleOrderSubmit = async () => {
         const orderDto = {
             deliveryAddress: `${city}, ${district}, ${ward}, ${deliveryAddress}`,
-            paymentMethod: 'CASH_ON_DELIVERY', // Update with the appropriate payment method if required
+            paymentMethod: 'CASH_ON_DELIVERY',
             items: cartItems.map(item => ({
                 productId: item.productId,
                 quantity: item.quantity,
@@ -79,7 +87,16 @@ const Pay = () => {
                 withCredentials: true
             });
             alert('Order placed successfully');
-            navigate("/xac-nhan-don-hang");
+            navigate("/xac-nhan-don-hang", {
+                state: {
+                    orderId: response.data.orderId,
+                    orderDate: response.data.orderDate,
+                    deliveryAddress: `${city}, ${district}, ${ward}, ${deliveryAddress}`,
+                    cartItems: cartItems,
+                    total: total,
+                    shippingMoney: shippingMoney
+                }
+            });
         } catch (error) {
             console.error('There was an error placing the order!', error);
             alert('There was an error placing the order. Please try again.');
@@ -96,9 +113,21 @@ const Pay = () => {
                         </div>
                         <div className="Infor-Customer">
                             <p>Họ tên:</p>
-                            <input type="text" value="lưu hải dăng" required />
+                            <input
+                                type="text"
+                                name="fullName"
+                                value={userInfo.fullName}
+                                onChange={handleUserInfoChange}
+                                required
+                            />
                             <p>Số điện thoại:</p>
-                            <input type="text" value="88888888" required />
+                            <input
+                                type="text"
+                                name="phone"
+                                value={userInfo.phone}
+                                onChange={handleUserInfoChange}
+                                required
+                            />
                             <p>Tỉnh/Thành phố:</p>
                             <input type="text" value={city} onChange={(e) => setCity(e.target.value)} required />
                             <p>Quận/Huyện:</p>
@@ -144,6 +173,7 @@ const Pay = () => {
                         <div className="Button" onClick={handleOrderSubmit}>
                             <p>Đặt hàng</p>
                         </div>
+                        <div><a href=""></a></div>
                     </div>
                 </div>
             </div>
