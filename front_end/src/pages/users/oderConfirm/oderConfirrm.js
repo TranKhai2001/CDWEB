@@ -16,32 +16,9 @@ const getCartDetails = async () => {
 };
 
 const OrderConfirm = () => {
-    // const [cartItems, setCartItems] = useState([]);
-    // const [total, setTotal] = useState(0);
 
     const location = useLocation();
     const { orderDate, orderId, deliveryAddress,total,shippingMoney ,cartItems} = location.state || {};
-
-    // useEffect(() => {
-    //     const fetchCartDetails = async () => {
-    //         try {
-    //             const data = await getCartDetails();
-    //             setCartItems(data);
-    //         } catch (error) {
-    //             console.error('Error fetching cart details:', error);
-    //         }
-    //     };
-
-    //     fetchCartDetails();
-    // }, []);
-
-    // useEffect(() => {
-    //     let totalAmount = 0;
-    //     cartItems.forEach(item => {
-    //         totalAmount += item.price * item.quantity;
-    //     });
-    //     setTotal(totalAmount);
-    // }, [cartItems]);
 
     return (
         <div className="container mt-5 mb-5">
