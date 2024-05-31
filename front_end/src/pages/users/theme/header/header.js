@@ -122,19 +122,24 @@ const Header = () =>{
             <div className={`humberger_menu_wrapper${isShowHumberger ? " show" : ""}`} >
                 <div className="header_logo">My Shop</div>
                 <div className="humberger_menu_cart">
+                    <div className="header_cart_price">Giỏ hàng:</div>
                     <ul>
                         <li>
                             <Link to={ROUTERS.USER.CART}><AiOutlineShoppingCart /><span>{cartQuantity}</span></Link>
                         </li>
                     </ul>
-                    <div className="header_cart_price">Giỏ hàng: <span>{formatter(1111111)}</span></div>
                 </div>
                 <div className="humberger_menu_widget">
                     <div className="header_top_right_auth">
-                        <a href="">
-                            <BiUser />
-                            Đăng nhập
-                        </a>
+                        {user ? (
+                            <>
+                                <li><span>{user.fullName}</span> | <a href="#" onClick={handleLogout}>Đăng xuất</a></li>
+                            </>
+                        ) : (
+                            <li>
+                                <Link to={ROUTERS.USER.LOGIN}><AiOutlineUser /> <span> Đăng nhập</span></Link>
+                            </li>
+                        )}
                     </div>
                 </div>
                 <div className="humberger_menu_nav">
@@ -240,9 +245,7 @@ const Header = () =>{
                     </div>
                     <div className="col-lg-3 ">
                         <div className="header_cart">
-                            <div className="header_cart_price">
-                                <span>{formatter(1111100)}</span>
-                            </div>
+                            <div className="header_cart_price">Giỏ hàng:</div>
                             <ul>
                                 <li>
                                     <Link to={ROUTERS.USER.CART}><AiOutlineShoppingCart /></Link>
@@ -280,15 +283,7 @@ const Header = () =>{
                     </div>
                     <div className="col-lg-9  col-md-12 col-sm-12 col-sm-12 hero_seach_container">
                         <div className="hero_seach ">
-
-                            {/*<div className="hero_seach_form">*/}
-                            {/*    <form action="">*/}
-                            {/*        <input type="text" name="" value="" placeholder="Bạn đang tìm gì?"/>*/}
-                            {/*        <button type="submit" >Tìm kiếm</button>*/}
-                            {/*    </form>*/}
-                            {/*</div>*/}
                             <SearchBar></SearchBar>
-                            
                             <div className="hero_seach_phone">
                                 <div className="hero_seach_phone_icon">
                                     <AiOutlinePhone />

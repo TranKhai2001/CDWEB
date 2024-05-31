@@ -43,6 +43,7 @@ const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
     const navige = useNavigate()
+    const shippingMoney = 10000;
     useEffect(() => {
         const fetchCartDetails = async () => {
             try {
@@ -154,15 +155,15 @@ const Cart = () => {
                                     <tbody>
                                     <tr className="total-data">
                                         <td><strong>Tạm tính: </strong></td>
-                                        <td>{total} VND</td>
+                                        <td>{total} </td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Phí ship: </strong></td>
-                                        <td>0 VND</td> {/* Thay đổi nếu có phí ship */}
+                                        <td>{shippingMoney} VND</td> {/* Thay đổi nếu có phí ship */}
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Tổng cộng: </strong></td>
-                                        <td>{total} VND</td>
+                                        <td>{total + shippingMoney} VND</td>
                                     </tr>
                                     </tbody>
                                 </table>

@@ -86,7 +86,6 @@ const Pay = () => {
                 },
                 withCredentials: true
             });
-            alert('Order placed successfully');
             navigate("/xac-nhan-don-hang", {
                 state: {
                     orderId: response.data.orderId,

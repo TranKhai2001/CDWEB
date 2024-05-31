@@ -46,7 +46,6 @@ const HomePage = () => {
 
         axios.post('http://localhost:8080/api/cart/add', cartItem, { withCredentials: true })
             .then(response => {
-                alert("Product added to cart successfully!");
             })
             .catch(error => {
                 console.error("There was an error adding the product to the cart!", error);
