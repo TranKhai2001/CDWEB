@@ -49,7 +49,7 @@ const HomePage = () => {
             })
             .catch(error => {
                 console.error("There was an error adding the product to the cart!", error);
-                alert("Failed to add product to cart.");
+                alert("Vui lòng đăng nhập để có thể mua sắm");
             });
     };
 

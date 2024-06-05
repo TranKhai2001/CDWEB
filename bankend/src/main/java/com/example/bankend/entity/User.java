@@ -3,10 +3,8 @@ package com.example.bankend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-
-
 import java.sql.Timestamp;
-import java.util.List;
+import java.time.Instant;
 
 @Entity
 @Table(name = "user")
@@ -55,4 +53,11 @@ public class User {
     @Column(name = "role", nullable = false)
     private UserRole role;
 
+    // Đảm bảo rằng registrationDate được thiết lập khi khởi tạo
+    @PrePersist
+    protected void onCreate() {
+        if (registrationDate == null) {
+            registrationDate = Timestamp.from(Instant.now());
+        }
+    }
 }

@@ -1,25 +1,20 @@
 package com.example.bankend.controller;
 
 import com.example.bankend.dto.LoginDto;
+import com.example.bankend.dto.RegisterDto;
 import com.example.bankend.entity.User;
 import com.example.bankend.service.UserService;
-
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
 
     @Autowired
     private UserService userService;
-
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpSession session) {
@@ -42,10 +37,19 @@ public class UserController {
         }
     }
 
-    @PostMapping("/logout") // Thêm mapping cho logout
+    @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
-        session.removeAttribute("user"); // Xóa thông tin người dùng khỏi session khi logout
+        session.removeAttribute("user");
         return new ResponseEntity<>("Logout successful", HttpStatus.OK);
     }
 
+    @PostMapping("/register")
+    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+        boolean isRegistered = userService.register(registerDto);
+        if (isRegistered) {
+            return new ResponseEntity<>("Registration successful", HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>("Registration failed", HttpStatus.BAD_REQUEST);
+        }
+    }
 }
