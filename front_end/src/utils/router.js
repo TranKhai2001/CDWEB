@@ -8,6 +8,8 @@ export const ROUTERS = {
         DETAILPRODUCT: "chi-tiet-san-pham/:productId",
         CART: "gio-hang",
         PAY: "thanh-toan",
-        ORDERCONFIRM:"xac-nhan-don-hang"
+        ORDERCONFIRM:"xac-nhan-don-hang",
+        ORDERHISTORY:"lich-su-don-hang",
+        ORDERHISTORYDETAIL:"chi-tiet-don-hang"
     }
 }

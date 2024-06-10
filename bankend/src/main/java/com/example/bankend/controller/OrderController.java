@@ -1,6 +1,7 @@
 package com.example.bankend.controller;
 
 import com.example.bankend.dto.OrderDTO;
+import com.example.bankend.dto.OrderHistoryDTO;
 import com.example.bankend.entity.Order;
 import com.example.bankend.entity.User;
 import com.example.bankend.service.OrderService;
@@ -9,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/order")
@@ -23,6 +26,17 @@ public class OrderController {
         if (user != null) {
             Order order = orderService.placeOrder(user, orderDTO);
             return new ResponseEntity<>(order, HttpStatus.CREATED);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<List<OrderHistoryDTO>> getOrderHistory(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            List<OrderHistoryDTO> orderHistory = orderService.getOrderHistory(user);
+            return new ResponseEntity<>(orderHistory, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
