@@ -1,6 +1,7 @@
 package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.OrderDTO;
+import com.example.bankend.dto.OrderHistoryDTO;
 import com.example.bankend.entity.*;
 import com.example.bankend.repository.CartRepository;
 import com.example.bankend.repository.OrderItemRepository;
@@ -63,5 +64,29 @@ public class OrderServiceImpl implements OrderService {
         cartRepository.save(cart);
 
         return order;
+    }
+
+    @Override
+    public List<OrderHistoryDTO> getOrderHistory(User user) {
+        List<Order> orders = orderRepository.findByUser(user);
+        return orders.stream().map(order -> {
+            List<OrderHistoryDTO.OrderItemDTO> items = order.getItems().stream().map(item ->
+                    new OrderHistoryDTO.OrderItemDTO(
+                            item.getProduct().getName(),
+                            item.getQuantity(),
+                            item.getPrice(),
+                            item.getProduct().getImageUrl())  // Thêm thông tin ảnh sản phẩm
+            ).collect(Collectors.toList());
+
+            return new OrderHistoryDTO(
+                    order.getOrderId(),
+                    order.getOrderDate(),
+                    order.getTotalAmount(),
+                    order.getDeliveryAddress(),
+                    order.getStatus(),
+                    order.getPaymentStatus(),
+                    items
+            );
+        }).collect(Collectors.toList());
     }
 }

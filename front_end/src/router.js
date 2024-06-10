@@ -9,6 +9,8 @@ import DetailProduct from "./pages/users/detailProduct/detailProduct";
 import Cart from "./pages/users/cart/cart";
 import Pay from "./pages/users/pay/pay";
 import OderConfirrm from "./pages/users/oderConfirm/oderConfirrm";
+import OrderHistory from "./pages/users/orderHistory/OrderHistory";
+import OrderHistoryDetail from "./pages/users/orderHistoryDetail/orderHistoryDetail";
 
 function renderUserRouter() {
     const userRouters = [
@@ -43,6 +45,14 @@ function renderUserRouter() {
         {
             path: ROUTERS.USER.ORDERCONFIRM,
             component: <OderConfirrm />,
+        },
+        {
+            path: ROUTERS.USER.ORDERHISTORY,
+            component: <OrderHistory />,
+        },
+        {
+            path: ROUTERS.USER.ORDERHISTORYDETAIL,
+            component: <OrderHistoryDetail />,
         }
     ];
     return (
