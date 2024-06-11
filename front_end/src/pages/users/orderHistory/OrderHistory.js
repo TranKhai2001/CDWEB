@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import "./style.scss";
+import { useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // Fetch the order history from the backend
         axios.get('http://localhost:8080/api/order/history', {
-            withCredentials: true // Include credentials for authorization
+            withCredentials: true
         })
             .then(response => {
                 setOrders(response.data);
@@ -17,6 +18,10 @@ const OrderHistory = () => {
                 console.error('There was an error fetching the order history!', error);
             });
     }, []);
+
+    const handleDetailClick = (orderId) => {
+        navigate(`/chi-tiet-don-hang/${orderId}`);
+    };
 
     return (
         <div className="order-history-container">
@@ -30,7 +35,7 @@ const OrderHistory = () => {
                     <th>Địa chỉ giao hàng</th>
                     <th>Trạng thái đơn hàng</th>
                     <th>trạng thái thanh toán</th>
-                    <th>Tùy chọn</th> {/* New column header */}
+                    <th>Tùy chọn</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -44,7 +49,7 @@ const OrderHistory = () => {
                         <td>{order.paymentStatus}</td>
                         <td>
                             <button className="action-button">Đã nhận được hàng</button>
-                            <button className="action-button">Chi tiết</button>
+                            <button className="action-button" onClick={() => handleDetailClick(order.orderId)}>Chi tiết</button>
                             <button className="action-button">Mua lại</button>
                         </td>
                     </tr>

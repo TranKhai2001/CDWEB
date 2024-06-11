@@ -1,10 +1,27 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router-dom';
 import "./style.scss";
-import {Link, useNavigate} from "react-router-dom";
-
 
 const OrderHistoryDetail = () => {
+    const { orderId } = useParams();
+    const [orderDetail, setOrderDetail] = useState(null);
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/api/order/history/${orderId}`, {
+            withCredentials: true
+        })
+            .then(response => {
+                setOrderDetail(response.data);
+            })
+            .catch(error => {
+                console.error('There was an error fetching the order detail!', error);
+            });
+    }, [orderId]);
+
+    if (!orderDetail) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container">
@@ -24,21 +41,15 @@ const OrderHistoryDetail = () => {
                                     </tr>
                                     </thead>
                                     <tbody>
-
-                                            <tr className="table-body-row" >
-                                                <td className="product-image"></td>
-                                                <td className="product-name"></td>
-                                                <td className="product-price"> VND</td>
-                                                <td className="product-quantity">
-                                                    <input
-                                                        type="number"
-                                                    />
-                                                </td>
-                                                <td className="product-total"> VND</td>
-                                            </tr>
-
-
-
+                                    {orderDetail.items.map(item => (
+                                        <tr className="table-body-row" key={item.productId}>
+                                            <td className="product-image"><img src={item.imageUrl} alt={item.productName} /></td>
+                                            <td className="product-name">{item.productName}</td>
+                                            <td className="product-price">{item.price} VND</td>
+                                            <td className="product-quantity">{item.quantity}</td>
+                                            <td className="product-total">{item.price * item.quantity} VND</td>
+                                        </tr>
+                                    ))}
                                     </tbody>
                                 </table>
                             </div>
@@ -56,15 +67,15 @@ const OrderHistoryDetail = () => {
                                     <tbody>
                                     <tr className="total-data">
                                         <td><strong>Tạm tính: </strong></td>
-                                        <td> </td>
+                                        <td>{orderDetail.totalAmount} VND</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Phí ship: </strong></td>
-                                        <td> VND</td> {/* Thay đổi nếu có phí ship */}
+                                        <td>10000 VND</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Tổng cộng: </strong></td>
-                                        <td> VND</td>
+                                        <td>{orderDetail.totalAmount} VND</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -79,6 +90,6 @@ const OrderHistoryDetail = () => {
             </div>
         </div>
     );
-}
+};
 
 export default memo(OrderHistoryDetail);

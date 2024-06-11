@@ -1,6 +1,7 @@
 package com.example.bankend.controller;
 
 import com.example.bankend.dto.OrderDTO;
+import com.example.bankend.dto.OrderDetailDTO;
 import com.example.bankend.dto.OrderHistoryDTO;
 import com.example.bankend.entity.Order;
 import com.example.bankend.entity.User;
@@ -37,6 +38,17 @@ public class OrderController {
         if (user != null) {
             List<OrderHistoryDTO> orderHistory = orderService.getOrderHistory(user);
             return new ResponseEntity<>(orderHistory, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @GetMapping("/history/{orderId}")
+    public ResponseEntity<OrderDetailDTO> getOrderDetail(@PathVariable Long orderId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            OrderDetailDTO orderDetail = orderService.getOrderDetail(orderId, user);
+            return new ResponseEntity<>(orderDetail, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
