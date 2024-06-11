@@ -92,6 +92,14 @@ const Cart = () => {
             console.error('Error removing cart item:', error);
         }
     };
+    const handleCheckout = (event) => {
+        if (cartItems.length === 0) {
+            event.preventDefault();
+            alert("Giỏ hàng của bạn trống");
+        } else {
+            navige("/thanh-toan")
+        }
+    };
 
     return (
         <div className="container">
@@ -169,7 +177,8 @@ const Cart = () => {
                                 </table>
                                 <div className="cart-buttons">
                                     <a href="/" className="boxed-btn">Tiếp tục mua</a>
-                                    <a href="/thanh-toan" className="boxed-btn black">Đặt hàng</a>
+                                    <a href="" onClick={handleCheckout} className="boxed-btn black">Đặt hàng</a>
+
                                 </div>
                             </div>
                         </div>

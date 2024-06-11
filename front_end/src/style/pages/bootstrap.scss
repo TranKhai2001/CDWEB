@@ -179,13 +179,9 @@ textarea {
 optgroup {
   font-weight: bold;
 }
-table {
-  border-spacing: 0;
-  border-collapse: collapse;
-}
-td,
-th {
-  padding: 0;
+table, th, td {
+  border:1px solid black;
+  justify-content: center;
 }
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
@@ -2259,7 +2255,7 @@ caption {
 table {
   background-color: transparent;
 }
-th {
+td {
   text-align: left;
 }
 .table {

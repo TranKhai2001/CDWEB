@@ -77,12 +77,12 @@ const OrderConfirm = () => {
                                             <td style={{ width: '40%' }}>
                                                 <span className="font-weight-bold"></span>
                                                 <div className="product-qty">
-                                                    <span className="d-block" style={{ color: `black`, fontSize: `14px` }}>{item.quantity}</span>
+                                                    <span className="d-block" style={{ color: `black`, fontSize: `14px` }}>SL: {item.quantity}</span>
                                                 </div>
                                             </td>
                                             <td style={{ width: '20%' }}>
                                                 <div className="text-right">
-                                                    <span className="font-weight-bold"> {formatter(item.quantity * item.price)}</span>
+                                                    <span className="font-weight-bold"> Giá: {formatter(item.quantity * item.price)}</span>
                                                 </div>
                                             </td>
                                         </tr>
@@ -136,6 +136,7 @@ const OrderConfirm = () => {
                             </div>
                             <p>Chúng tôi sẽ gửi email xác nhận vận chuyển khi hàng được vận chuyển thành công!</p>
                             <p className="font-weight-bold mb-0">Cảm ơn đã mua sắm với chúng tôi!</p>
+                            <a href="/lich-su-don-hang"><p>Xem đơn hàng của bạn tại đây</p></a>
                         </div>
                     </div>
                 </div>

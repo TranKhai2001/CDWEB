@@ -10,6 +10,7 @@ export const ROUTERS = {
         PAY: "thanh-toan",
         ORDERCONFIRM:"xac-nhan-don-hang",
         ORDERHISTORY:"lich-su-don-hang",
-        ORDERHISTORYDETAIL: "chi-tiet-don-hang/:orderId"
+        ORDERHISTORYDETAIL: "chi-tiet-don-hang/:orderId",
+        ADMINPAGE :"admin"
     }
 }
