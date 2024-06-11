@@ -62,7 +62,7 @@ const Login = () => {
                     {error && <div className="error">{error}</div>}
                 </form>
                 <div className="links">
-                    <Link to="/register">Đăng ký</Link>
+                    <Link to="/dang-ky">Đăng ký</Link>
                     <Link to="/forgot-password">Quên mật khẩu?</Link>
                 </div>
             </div>

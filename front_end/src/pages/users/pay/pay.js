@@ -55,6 +55,7 @@ const Pay = () => {
             });
         }
     }, []);
+
     const handleUserInfoChange = (e) => {
         const { name, value } = e.target;
         setUserInfo(prevState => ({
@@ -69,6 +70,16 @@ const Pay = () => {
     const [deliveryAddress, setDeliveryAddress] = useState('');
 
     const handleOrderSubmit = async () => {
+        if (cartItems.length === 0) {
+            alert("Giỏ hàng của bạn trống");
+            return;
+        }
+
+        if (!userInfo.fullName || !userInfo.phone || !city || !district || !ward ) {
+            alert("Bạn hãy điền đủ thông tin");
+            return;
+        }
+
         const orderDto = {
             deliveryAddress: `${city}, ${district}, ${ward}, ${deliveryAddress}`,
             paymentMethod: 'CASH_ON_DELIVERY',

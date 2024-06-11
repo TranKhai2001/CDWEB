@@ -24,7 +24,7 @@ const OrderHistory = () => {
     };
 
     return (
-        <div className="order-history-container">
+        <div className="order-history-container container ">
             <h2>Lịch Sử Đơn Hàng</h2>
             <table className="order-history-table">
                 <thead>

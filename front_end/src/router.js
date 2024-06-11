@@ -11,6 +11,7 @@ import Pay from "./pages/users/pay/pay";
 import OderConfirrm from "./pages/users/oderConfirm/oderConfirrm";
 import OrderHistory from "./pages/users/orderHistory/OrderHistory";
 import OrderHistoryDetail from "./pages/users/orderHistoryDetail/orderHistoryDetail";
+import AdminPage from "./pages/users/adminPage/admin";
 
 function renderUserRouter() {
     const userRouters = [
@@ -53,6 +54,10 @@ function renderUserRouter() {
         {
             path: ROUTERS.USER.ORDERHISTORYDETAIL,
             component: <OrderHistoryDetail />,
+        },
+        {
+            path: ROUTERS.USER.ADMINPAGE,
+            component: <AdminPage />,
         }
     ];
     return (
