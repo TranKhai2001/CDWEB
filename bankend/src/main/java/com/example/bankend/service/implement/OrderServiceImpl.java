@@ -1,6 +1,7 @@
 package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.OrderDTO;
+import com.example.bankend.dto.OrderDetailDTO;
 import com.example.bankend.dto.OrderHistoryDTO;
 import com.example.bankend.entity.*;
 import com.example.bankend.repository.CartRepository;
@@ -88,5 +89,34 @@ public class OrderServiceImpl implements OrderService {
                     items
             );
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public OrderDetailDTO getOrderDetail(Long orderId, User user) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        if (!order.getUser().getUserId().equals(user.getUserId())) {
+            throw new IllegalArgumentException("Unauthorized access to order details");
+        }
+
+        List<OrderDetailDTO.OrderItemDetailDTO> items = order.getItems().stream().map(item ->
+                new OrderDetailDTO.OrderItemDetailDTO(
+                        item.getProduct().getProductId(),
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        item.getPrice(),
+                        item.getProduct().getImageUrl())
+        ).collect(Collectors.toList());
+
+        return new OrderDetailDTO(
+                order.getOrderId(),
+                order.getOrderDate(),
+                order.getTotalAmount(),
+                order.getDeliveryAddress(),
+                order.getStatus(),
+                order.getPaymentStatus(),
+                items
+        );
     }
 }
