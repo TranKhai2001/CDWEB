@@ -148,6 +148,7 @@ const Header = () => {
             setMenus((prevMenus) => prevMenus.filter(menu => menu.name !== "Quản lý"));
         }
     }, [user]);
+
     return (
         <>
             <div className={`humberger_menu_overlay${isShowHumberger ? " active" : ""}`} onClick={() => setShowHumberger(false)} />

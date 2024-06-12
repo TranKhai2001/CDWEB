@@ -11,7 +11,11 @@ import Pay from "./pages/users/pay/pay";
 import OderConfirrm from "./pages/users/oderConfirm/oderConfirrm";
 import OrderHistory from "./pages/users/orderHistory/OrderHistory";
 import OrderHistoryDetail from "./pages/users/orderHistoryDetail/orderHistoryDetail";
-import AdminPage from "./pages/users/adminPage/admin";
+import AdminPage from "./pages/adminPage/admin";
+import ListUser from "./pages/adminPage/listUser/listUser";
+import ListProduct from "./pages/adminPage/listProduct/listProduct";
+import ListOrder from "./pages/adminPage/listOrder/listOrder";
+import UserDetails from "./pages/adminPage/userDetails/userDetails";
 
 function renderUserRouter() {
     const userRouters = [
@@ -58,6 +62,24 @@ function renderUserRouter() {
         {
             path: ROUTERS.USER.ADMINPAGE,
             component: <AdminPage />,
+        }
+        ,
+        {
+            path: ROUTERS.USER.LISTUSER,
+            component: <ListUser />,
+        },
+        {
+            path: ROUTERS.USER.LISTPRODUCT,
+            component: <ListProduct />,
+        },
+        {
+            path: ROUTERS.USER.LISTODER,
+            component: <ListOrder />,
+        }
+        ,
+        {
+            path: ROUTERS.USER.USERDETAILS,
+            component: <UserDetails />,
         }
     ];
     return (
