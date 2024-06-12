@@ -67,7 +67,7 @@ const OrderHistoryDetail = () => {
                                     <tbody>
                                     <tr className="total-data">
                                         <td><strong>Tạm tính: </strong></td>
-                                        <td>{orderDetail.totalAmount} VND</td>
+                                        <td>{orderDetail.totalAmount-10000} VND</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Phí ship: </strong></td>

@@ -42,8 +42,9 @@ const removeCartItem = async (productId) => {
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
-    const navige = useNavigate()
+    const navigate = useNavigate();
     const shippingMoney = 10000;
+
     useEffect(() => {
         const fetchCartDetails = async () => {
             try {
@@ -64,6 +65,13 @@ const Cart = () => {
     };
 
     const handleQuantityChange = async (productId, newQuantity) => {
+        if (newQuantity < 0) return;
+
+        if (newQuantity === 0) {
+            handleRemoveCartItem(productId);
+            return;
+        }
+
         const updatedItems = cartItems.map(item => {
             if (item.productId === productId) {
                 return { ...item, quantity: newQuantity };
@@ -82,7 +90,7 @@ const Cart = () => {
     };
 
     const handleRemoveCartItem = async (productId, event) => {
-        event.preventDefault();
+        if (event) event.preventDefault();
         try {
             await removeCartItem(productId);
             const updatedItems = cartItems.filter(item => item.productId !== productId);
@@ -92,12 +100,13 @@ const Cart = () => {
             console.error('Error removing cart item:', error);
         }
     };
+
     const handleCheckout = (event) => {
         if (cartItems.length === 0) {
             event.preventDefault();
             alert("Giỏ hàng của bạn trống");
         } else {
-            navige("/thanh-toan")
+            navigate("/thanh-toan");
         }
     };
 
@@ -178,7 +187,6 @@ const Cart = () => {
                                 <div className="cart-buttons">
                                     <a href="/" className="boxed-btn">Tiếp tục mua</a>
                                     <a href="" onClick={handleCheckout} className="boxed-btn black">Đặt hàng</a>
-
                                 </div>
                             </div>
                         </div>
