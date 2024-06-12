@@ -60,4 +60,5 @@ public class User {
             registrationDate = Timestamp.from(Instant.now());
         }
     }
+
 }

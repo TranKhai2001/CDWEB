@@ -11,6 +11,10 @@ export const ROUTERS = {
         ORDERCONFIRM:"xac-nhan-don-hang",
         ORDERHISTORY:"lich-su-don-hang",
         ORDERHISTORYDETAIL: "chi-tiet-don-hang/:orderId",
-        ADMINPAGE :"admin"
+        ADMINPAGE :"admin",
+        LISTUSER : "danh-sach-nguoi-dung",
+        LISTPRODUCT: "danh-sach-san-pham",
+        LISTODER: "danh-sach-don-hang",
+        USERDETAILS : "chi-tiet-nguoi-dung/:userId"
     }
 }
