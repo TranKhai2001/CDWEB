@@ -18,6 +18,7 @@ const Header = () =>{
     const [isShowHumberger,setShowHumberger] = useState(false)
     const [user, setUser] = useState(null); // Lưu trữ thông tin người dùng
     const [cartQuantity, setCartQuantity] = useState(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const checkLoginStatus = async () => {
@@ -70,6 +71,7 @@ const Header = () =>{
             });
             if (response.ok) {
                 setUser(null);
+                navigate(ROUTERS.USER.HOME)
             } else {
                 console.error('Đăng xuất không thành công');
             }
@@ -90,19 +92,19 @@ const Header = () =>{
             child: [
                 {
                     name: "Rau củ",
-                    path: ""
+                    path: "/products/vegetables"
                 },
                 {
                     name: "Trái cây",
-                    path: ""
+                    path: "/products/fruits"
                 },
                 {
                     name: "Nước trái cây",
-                    path: ""
+                    path: "/products/juice"
                 },
                 {
                     name: "Trái cây sấy",
-                    path: ""
+                    path: "/products/dried-fruits"
                 }
             ]
         },
@@ -115,6 +117,35 @@ const Header = () =>{
             path: ROUTERS.USER.HOME
         }
     ]);
+
+    useEffect(() => {
+        if (user?.role === 'ADMIN') {
+            setMenus((prevMenus) => [
+                ...prevMenus,
+                {
+                    name: "Quản lý",
+                    path: "",
+                    isShowSubmenu: false,
+                    child: [
+                        {
+                            name: "Quản lý người dùng",
+                            path: ROUTERS.USER.LISTUSER
+                        },
+                        {
+                            name: "Quản lý sản phẩm",
+                            path: ROUTERS.USER.LISTPRODUCT
+                        },
+                        {
+                            name: "Quản lý đơn hàng",
+                            path:   ROUTERS.USER.LISTODER
+                        }
+                    ]
+                }
+            ]);
+        } else {
+            setMenus((prevMenus) => prevMenus.filter(menu => menu.name !== "Quản lý"));
+        }
+    }, [user]);
 
     return (
         <>

@@ -1,0 +1,25 @@
+@use "sass:map";
+@import "src/style/pages/theme";
+@import "src/style/pages/all";
+
+.section-title {
+  margin-bottom: 50px;
+  text-align: center;
+
+  h2 {
+    position: relative;
+    text-transform: inherit;
+  }
+
+  h2:after {
+    position: absolute;
+    left: 0;
+    bottom: -40%;
+    right: 0;
+    height: 4px;
+    width: 80px;
+    background: map.get($theme-colors, "main");
+    content: "";
+    margin: 0 auto;
+  }
+}
