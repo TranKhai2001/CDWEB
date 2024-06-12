@@ -50,7 +50,6 @@ const OrderHistory = () => {
                         <td>
                             <button className="action-button">Đã nhận được hàng</button>
                             <button className="action-button" onClick={() => handleDetailClick(order.orderId)}>Chi tiết</button>
-                            <button className="action-button">Mua lại</button>
                         </td>
                     </tr>
                 ))}

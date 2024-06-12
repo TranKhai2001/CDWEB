@@ -1,6 +1,6 @@
 import React, { memo, useState, useEffect } from 'react';
 import "./style.scss"
-import {AiFillFacebook, AiOutlineDownCircle, AiOutlineUpCircle} from "react-icons/ai";
+import { AiFillFacebook, AiOutlineDownCircle, AiOutlineUpCircle } from "react-icons/ai";
 import { AiOutlineInstagram } from "react-icons/ai";
 import { AiFillTwitterSquare } from "react-icons/ai";
 import { AiFillGooglePlusCircle } from "react-icons/ai";
@@ -10,14 +10,16 @@ import { AiOutlineShoppingCart } from "react-icons/ai";
 import { AiOutlineMenu } from "react-icons/ai";
 import { AiOutlinePhone } from "react-icons/ai";
 import { BiUser } from "react-icons/bi";
-import {formatter} from "utils/formatter"
-import {ROUTERS} from "utils/router"
-import {Link, Route, Routes, useNavigate} from "react-router-dom";
+import { formatter } from "utils/formatter"
+import { ROUTERS } from "utils/router"
+import { Link, Route, Routes, useNavigate } from "react-router-dom";
 import SearchBar from "./searchBar";
-const Header = () =>{
-    const [isShowHumberger,setShowHumberger] = useState(false)
+
+const Header = () => {
+    const [isShowHumberger, setShowHumberger] = useState(false)
     const [user, setUser] = useState(null); // Lưu trữ thông tin người dùng
     const [cartQuantity, setCartQuantity] = useState(0);
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -164,7 +166,16 @@ const Header = () =>{
                     <div className="header_top_right_auth">
                         {user ? (
                             <>
-                                <li><span>{user.fullName}</span> | <a href="#" onClick={handleLogout}>Đăng xuất</a></li>
+                                <li>
+                                    <span onClick={() => setDropdownOpen(!isDropdownOpen)}>{user.fullName}</span> | <a href="#" onClick={handleLogout}>Đăng xuất</a>
+                                    {isDropdownOpen && (
+                                        <div className="dropdown_menu">
+                                            <Link to={ROUTERS.USER.ORDER_HISTORY}>Lịch sử đơn hàng</Link>
+                                            <Link to={ROUTERS.USER.PROFILE}>Thông tin cá nhân</Link>
+                                            <Link to={ROUTERS.USER.CHANGE_PASSWORD}>Đổi mật khẩu</Link>
+                                        </div>
+                                    )}
+                                </li>
                             </>
                         ) : (
                             <li>
@@ -222,18 +233,37 @@ const Header = () =>{
                             </ul>
                         </div>
                         <div className="col-6 header-top-right">
-                            <ul>
-                                <li><a href=""><AiFillFacebook /></a></li>
-                                <li><a href=""><AiOutlineInstagram /></a></li>
-                                <li><a href=""><AiFillGooglePlusCircle /></a></li>
-                                <li><a href=""><AiFillTwitterSquare /></a></li>
+                            <ul className="user-actions">
+                                <li>
+                                    <a href=""><AiFillFacebook /></a>
+                                </li>
+                                <li>
+                                    <a href=""><AiOutlineInstagram /></a>
+                                </li>
+                                <li>
+                                    <a href=""><AiFillGooglePlusCircle /></a>
+                                </li>
+                                <li>
+                                    <a href=""><AiFillTwitterSquare /></a>
+                                </li>
                                 {user ? (
-                                    <>
-                                        <li><span>{user.fullName}</span> | <a href="#" onClick={handleLogout}>Đăng xuất</a></li>
-                                    </>
+                                    <li className={isDropdownOpen ? "dropdown-open" : ""}>
+      <span onClick={() => setDropdownOpen(!isDropdownOpen)}>
+        {user.fullName}
+      </span> | <a href="#" onClick={handleLogout}>Đăng xuất</a>
+                                        {isDropdownOpen && (
+                                            <div className="dropdown_menu">
+                                                <Link to={ROUTERS.USER.ORDER_HISTORY}>Lịch sử đơn hàng</Link>
+                                                <Link to={ROUTERS.USER.PROFILE}>Thông tin cá nhân</Link>
+                                                <Link to={ROUTERS.USER.CHANGE_PASSWORD}>Đổi mật khẩu</Link>
+                                            </div>
+                                        )}
+                                    </li>
                                 ) : (
                                     <li>
-                                        <Link to={ROUTERS.USER.LOGIN}><AiOutlineUser /> <span> Đăng nhập</span></Link>
+                                        <Link to={ROUTERS.USER.LOGIN}>
+                                            <AiOutlineUser /> <span>Đăng nhập</span>
+                                        </Link>
                                     </li>
                                 )}
                             </ul>

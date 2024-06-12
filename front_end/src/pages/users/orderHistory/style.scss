@@ -32,6 +32,7 @@
     }
 
     .action-button {
+      margin-top: 5px;
       margin-right: 10px;
       padding: 5px 10px;
       border: none;
@@ -40,6 +41,7 @@
       font-size: 14px;
       background-color: map-get($theme-colors, "main");
       color: #fff;
+
       transition: background-color 0.3s ease;
 
       &:hover {
