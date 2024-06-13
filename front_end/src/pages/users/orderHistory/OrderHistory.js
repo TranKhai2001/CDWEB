@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import axios from 'axios';
 import "./style.scss";
-import { useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
@@ -59,4 +59,4 @@ const OrderHistory = () => {
     );
 };
 
-export default OrderHistory;
+export default memo(OrderHistory);

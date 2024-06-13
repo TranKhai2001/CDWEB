@@ -170,7 +170,7 @@ const Header = () => {
                                     <span onClick={() => setDropdownOpen(!isDropdownOpen)}>{user.fullName}</span> | <a href="#" onClick={handleLogout}>Đăng xuất</a>
                                     {isDropdownOpen && (
                                         <div className="dropdown_menu">
-                                            <Link to={ROUTERS.USER.ORDER_HISTORY}>Lịch sử đơn hàng</Link>
+                                            <Link to={ROUTERS.USER.ORDERHISTORY}>Lịch sử đơn hàng</Link>
                                             <Link to={ROUTERS.USER.PROFILE}>Thông tin cá nhân</Link>
                                             <Link to={ROUTERS.USER.CHANGE_PASSWORD}>Đổi mật khẩu</Link>
                                         </div>
@@ -253,7 +253,7 @@ const Header = () => {
       </span> | <a href="#" onClick={handleLogout}>Đăng xuất</a>
                                         {isDropdownOpen && (
                                             <div className="dropdown_menu">
-                                                <Link to={ROUTERS.USER.ORDER_HISTORY}>Lịch sử đơn hàng</Link>
+                                                <Link to={ROUTERS.USER.ORDERHISTORY}>Lịch sử đơn hàng</Link>
                                                 <Link to={ROUTERS.USER.PROFILE}>Thông tin cá nhân</Link>
                                                 <Link to={ROUTERS.USER.CHANGE_PASSWORD}>Đổi mật khẩu</Link>
                                             </div>
