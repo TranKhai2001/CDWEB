@@ -46,6 +46,12 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByUsername(registerDto.getUsername()) != null) {
             return false;
         }
+        if (userRepository.findByEmail(registerDto.getEmail()) != null) {
+            return false; // Email đã tồn tại
+        }
+        if (userRepository.findByPhoneNumber(registerDto.getPhoneNumber()) != null) {
+            return false; // Số điện thoại đã tồn tại
+        }
 
         String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
 
@@ -73,6 +79,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username) != null;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
+
+    @Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber) != null;
     }
 
 }
