@@ -9,4 +9,6 @@ public interface ProductService {
     ProductDTO getProductById(Long productId);
 
     List<ProductDTO> getActiveProducts();
+
+    int getProductQuantityAvailable(Long productId);
 }

@@ -2,7 +2,7 @@ import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 import { FaRegWindowMinimize } from "react-icons/fa";
 import "./style.scss";
-import {Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTERS } from "../../../utils/router";
 
 // Hàm gọi API lấy thông tin giỏ hàng
@@ -39,8 +39,21 @@ const removeCartItem = async (productId) => {
     }
 };
 
+// Hàm gọi API lấy số lượng còn lại của sản phẩm
+const getProductQuantity = async (productId) => {
+    const API_URL = `http://localhost:8080/api/products/${productId}/quantity`;
+    try {
+        const response = await axios.get(API_URL);
+        return response.data;
+    } catch (error) {
+        console.error('Failed to fetch product quantity:', error);
+        throw error;
+    }
+};
+
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
+    const [productQuantities, setProductQuantities] = useState({});
     const [total, setTotal] = useState(0);
     const navigate = useNavigate();
     const shippingMoney = 10000;
@@ -51,6 +64,14 @@ const Cart = () => {
                 const data = await getCartDetails();
                 setCartItems(data);
                 calculateTotal(data);
+
+                // Fetch quantities for each product in the cart
+                const quantities = {};
+                for (let item of data) {
+                    const quantity = await getProductQuantity(item.productId);
+                    quantities[item.productId] = quantity;
+                }
+                setProductQuantities(quantities);
             } catch (error) {
                 console.error('Error fetching cart details:', error);
             }
@@ -65,7 +86,11 @@ const Cart = () => {
     };
 
     const handleQuantityChange = async (productId, newQuantity) => {
-        if (newQuantity < 0) return;
+        const maxQuantity = productQuantities[productId];
+        if (newQuantity < 0 || newQuantity > maxQuantity) {
+            alert(`Số lượng sản phẩm mau không được lớn hơn số lượng sản phẩm còn lại ${maxQuantity}`);
+            return;
+        }
 
         if (newQuantity === 0) {
             handleRemoveCartItem(productId);
@@ -101,12 +126,21 @@ const Cart = () => {
         }
     };
 
-    const handleCheckout = (event) => {
-        if (cartItems.length === 0) {
-            event.preventDefault();
-            alert("Giỏ hàng của bạn trống");
-        } else {
+    const handleCheckout = async (event) => {
+        event.preventDefault();
+        try {
+            for (let item of cartItems) {
+                const productResponse = await axios.get(`http://localhost:8080/api/products/${item.productId}/quantity`);
+                const quantityAvailable = productResponse.data;
+                if (item.quantity > quantityAvailable) {
+                    alert(`Số lượng sản phẩm "${item.productName}" còn lại không đủ`);
+                    return;
+                }
+            }
             navigate("/thanh-toan");
+        } catch (error) {
+            console.error('Error during checkout:', error);
+            alert("Có lỗi xảy ra khi kiểm tra số lượng sản phẩm");
         }
     };
 
@@ -145,6 +179,7 @@ const Cart = () => {
                                                         type="number"
                                                         value={item.quantity}
                                                         onChange={(e) => handleQuantityChange(item.productId, parseInt(e.target.value))}
+                                                        max={productQuantities[item.productId]} // Set max quantity
                                                     />
                                                 </td>
                                                 <td className="product-total">{item.price * item.quantity} VND</td>

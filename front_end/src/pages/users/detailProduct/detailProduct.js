@@ -74,6 +74,7 @@ const DetailProduct = () => {
                             <ul>
                                 <li><b>Loại:</b> <span>{product.categoryName}</span></li>
                                 <li><b>Số lượng còn lại:</b> <span>{product.quantityAvailable}</span></li>
+                                <li><b>Số lượng đã bán:</b> <span>{product.sold}</span></li>
                                 <li><b>Trọng lượng:</b> <span>{product.weight} {product.unit}</span></li>
                                 <li><b>Share on</b>
                                     <div className="share">

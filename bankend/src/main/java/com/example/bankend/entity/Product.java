@@ -32,6 +32,9 @@ public class Product {
     @Column(name = "quantity_available", nullable = false)
     private int quantityAvailable;
 
+    @Column(name = "sold", nullable = false)
+    private int sold;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;

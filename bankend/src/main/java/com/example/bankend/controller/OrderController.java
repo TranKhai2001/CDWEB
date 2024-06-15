@@ -22,11 +22,15 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/place")
-    public ResponseEntity<Order> placeOrder(@RequestBody OrderDTO orderDTO, HttpSession session) {
+    public ResponseEntity<?> placeOrder(@RequestBody OrderDTO orderDTO, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
-            Order order = orderService.placeOrder(user, orderDTO);
-            return new ResponseEntity<>(order, HttpStatus.CREATED);
+            try {
+                Order order = orderService.placeOrder(user, orderDTO);
+                return new ResponseEntity<>(order, HttpStatus.CREATED);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            }
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }

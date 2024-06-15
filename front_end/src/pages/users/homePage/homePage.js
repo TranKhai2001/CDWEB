@@ -112,7 +112,7 @@ const HomePage = () => {
                     {
                         products
                             .slice()
-                            .sort((a, b) => b.quantityAvailable - a.quantityAvailable)
+                            .sort((a, b) => b.sold - a.sold)
                             .slice(0, 6)
                             .map((item, index) => (
                                 <div className="categories_slider_item" style={{ backgroundImage: `url(${item.imageUrl})` }} key={index}>
