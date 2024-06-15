@@ -44,4 +44,10 @@ public class ProductController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/{productId}/quantity")
+    public ResponseEntity<Integer> getProductQuantityAvailable(@PathVariable Long productId) {
+        int quantityAvailable = productService.getProductQuantityAvailable(productId);
+        return ResponseEntity.ok(quantityAvailable);
+    }
 }

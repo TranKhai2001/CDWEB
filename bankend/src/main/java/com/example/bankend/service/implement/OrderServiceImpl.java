@@ -7,6 +7,7 @@ import com.example.bankend.entity.*;
 import com.example.bankend.repository.CartRepository;
 import com.example.bankend.repository.OrderItemRepository;
 import com.example.bankend.repository.OrderRepository;
+import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
 
     @Override
     public Order placeOrder(User user, OrderDTO orderDTO) {
@@ -49,11 +53,25 @@ public class OrderServiceImpl implements OrderService {
         // Now create order items
         Order finalOrder = order;
         List<OrderItem> orderItems = cart.getItems().stream().map(cartItem -> {
+            Product product = cartItem.getProduct();
+            int quantityAvailable = product.getQuantityAvailable();
+            int quantityToBuy = cartItem.getQuantity();
+
+            if (quantityToBuy > quantityAvailable) {
+                throw new IllegalArgumentException("Số lượng '" + product.getName() + "' còn lại không đủ");
+            }
+
+            // Update product quantity and sold count
+            product.setQuantityAvailable(quantityAvailable - quantityToBuy);
+            product.setSold(product.getSold() + quantityToBuy);
+            productRepository.save(product);
+
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(finalOrder);
-            orderItem.setProduct(cartItem.getProduct());
-            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProduct(product);
+            orderItem.setQuantity(quantityToBuy);
             orderItem.setPrice(cartItem.getPrice());
+
             return orderItem;
         }).collect(Collectors.toList());
 
@@ -76,7 +94,7 @@ public class OrderServiceImpl implements OrderService {
                             item.getProduct().getName(),
                             item.getQuantity(),
                             item.getPrice(),
-                            item.getProduct().getImageUrl())  // Thêm thông tin ảnh sản phẩm
+                            item.getProduct().getImageUrl())
             ).collect(Collectors.toList());
 
             return new OrderHistoryDTO(

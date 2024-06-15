@@ -54,6 +54,12 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    @Override
+    public int getProductQuantityAvailable(Long productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        return product.map(Product::getQuantityAvailable).orElse(0);
+    }
+
 
     private ProductDTO convertToDto(Product product) {
         return new ProductDTO(
@@ -62,6 +68,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getDescription(),
                 product.getPrice(),
                 product.getQuantityAvailable(),
+                product.getSold(),
                 product.getCategory().getName(),
                 product.getImageUrl(),
                 product.getWeight(),
