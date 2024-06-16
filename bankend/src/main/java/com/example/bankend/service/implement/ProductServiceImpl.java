@@ -8,6 +8,7 @@ import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -53,7 +54,18 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
     }
-
+    @Override
+    public void deleteProduct(Long productId) {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            product.setStatus(ProductStatus.INACTIVE);
+            productRepository.save(product);
+        } else {
+            logger.warn("Product with ID: {} not found", productId);
+            throw new RuntimeException("Product not found");
+        }
+    }
 
     private ProductDTO convertToDto(Product product) {
         return new ProductDTO(
@@ -70,4 +82,5 @@ public class ProductServiceImpl implements ProductService {
                 product.getStatus()
         );
     }
+
 }
