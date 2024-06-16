@@ -6,6 +6,7 @@ import {useNavigate } from 'react-router-dom';
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
+    const shippingMoney = 10000;
 
     useEffect(() => {
         axios.get('http://localhost:8080/api/order/history', {
@@ -43,7 +44,7 @@ const OrderHistory = () => {
                     <tr key={order.orderId}>
                         <td>{order.orderId}</td>
                         <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                        <td>{order.totalAmount}</td>
+                        <td>{order.totalAmount+shippingMoney}</td>
                         <td>{order.deliveryAddress}</td>
                         <td>{order.status}</td>
                         <td>{order.paymentStatus}</td>

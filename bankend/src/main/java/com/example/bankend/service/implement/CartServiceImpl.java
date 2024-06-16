@@ -53,9 +53,9 @@ public class CartServiceImpl implements CartService {
             Optional<CartItem> existingCartItemOpt = cartItemRepository.findByCartAndProduct(cart, product);
 
             if (existingCartItemOpt.isPresent()) {
-                // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng lên 1
+                // Nếu sản phẩm đã có trong giỏ hàng, tăng số lượng lên bằng số lượng hiện tại cộng thêm số lượng từ DTO
                 CartItem existingCartItem = existingCartItemOpt.get();
-                existingCartItem.setQuantity(existingCartItem.getQuantity() + 1);
+                existingCartItem.setQuantity(existingCartItem.getQuantity() + cartItemDTO.getQuantity());
                 return cartItemRepository.save(existingCartItem);
             } else {
                 // Nếu sản phẩm chưa có trong giỏ hàng, thêm mới
