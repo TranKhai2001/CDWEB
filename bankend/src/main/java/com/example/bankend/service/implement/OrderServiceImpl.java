@@ -8,11 +8,13 @@ import com.example.bankend.repository.CartRepository;
 import com.example.bankend.repository.OrderItemRepository;
 import com.example.bankend.repository.OrderRepository;
 import com.example.bankend.repository.ProductRepository;
+import com.example.bankend.service.EmailService;
 import com.example.bankend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +33,9 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private ProductRepository productRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public Order placeOrder(User user, OrderDTO orderDTO) {
         Cart cart = cartRepository.findByUserAndStatus(user, Cart.CartStatus.ACTIVE)
@@ -47,10 +52,8 @@ public class OrderServiceImpl implements OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         order.setTotalAmount(totalAmount);
 
-        // Save the order first to get the order ID
         order = orderRepository.save(order);
 
-        // Now create order items
         Order finalOrder = order;
         List<OrderItem> orderItems = cart.getItems().stream().map(cartItem -> {
             Product product = cartItem.getProduct();
@@ -61,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
                 throw new IllegalArgumentException("Số lượng '" + product.getName() + "' còn lại không đủ");
             }
 
-            // Update product quantity and sold count
             product.setQuantityAvailable(quantityAvailable - quantityToBuy);
             product.setSold(product.getSold() + quantityToBuy);
             productRepository.save(product);
@@ -78,11 +80,38 @@ public class OrderServiceImpl implements OrderService {
         order.setItems(orderItems);
         orderItemRepository.saveAll(orderItems);
 
-        // Clear the cart after placing the order
         cart.getItems().clear();
         cartRepository.save(cart);
 
+        // Send email notification
+        sendOrderConfirmationEmail(user, order, orderItems);
+
         return order;
+    }
+
+    private void sendOrderConfirmationEmail(User user, Order order, List<OrderItem> orderItems) {
+        StringBuilder itemDetails = new StringBuilder();
+        for (OrderItem item : orderItems) {
+            itemDetails.append(item.getProduct().getName())
+                    .append(" (x").append(item.getQuantity()).append("), ");
+        }
+
+        // Tạo một BigDecimal từ 10,000
+        BigDecimal additionalAmount = BigDecimal.valueOf(10000);
+
+        // Cộng additionalAmount vào order.getTotalAmount()
+        BigDecimal totalAmountWithAddition = order.getTotalAmount().add(additionalAmount);
+
+        // Format totalAmountWithAddition với dấu phân cách hàng nghìn và không có dấu phẩy thập phân
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        String formattedTotalAmount = decimalFormat.format(totalAmountWithAddition);
+
+        String subject = "Xác nhận đơn hàng";
+        String text = "Quý khách đã đặt đơn hàng gồm: " + itemDetails.toString() +
+                "Tổng tiền: " + formattedTotalAmount + " VND" +
+                ". Mọi thông tin của đơn hàng sẽ được cập nhật qua email và web. Hãy chú ý theo dõi.";
+
+        emailService.sendOrderConfirmationEmail(user.getEmail(), subject, text);
     }
 
     @Override
