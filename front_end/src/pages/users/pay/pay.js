@@ -21,6 +21,7 @@ const Pay = () => {
     const navigate = useNavigate();
     const shippingMoney = 10000;
 
+
     useEffect(() => {
         const fetchCartDetails = async () => {
             try {
@@ -74,6 +75,7 @@ const Pay = () => {
             alert("Giỏ hàng của bạn trống");
             return;
         }
+
 
         if (!userInfo.fullName || !userInfo.phone || !city || !district || !ward ) {
             alert("Bạn hãy điền đủ thông tin");
@@ -177,7 +179,7 @@ const Pay = () => {
                         <div className="Total-Money">
                             <div className="Money">
                                 <p>Tổng tiền:</p>
-                                <p className="Price">{formatter(total + shippingMoney)}</p>
+                                <p className="Price">{formatter(total+shippingMoney)}</p>
                             </div>
                         </div>
                         <div className="Button" onClick={handleOrderSubmit}>

@@ -6,6 +6,7 @@ import "./style.scss";
 const OrderHistoryDetail = () => {
     const { orderId } = useParams();
     const [orderDetail, setOrderDetail] = useState(null);
+    const shippingMoney = 10000;
 
     useEffect(() => {
         axios.get(`http://localhost:8080/api/order/history/${orderId}`, {
@@ -67,7 +68,7 @@ const OrderHistoryDetail = () => {
                                     <tbody>
                                     <tr className="total-data">
                                         <td><strong>Tạm tính: </strong></td>
-                                        <td>{orderDetail.totalAmount-10000} VND</td>
+                                        <td>{orderDetail.totalAmount} VND</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Phí ship: </strong></td>
@@ -75,7 +76,7 @@ const OrderHistoryDetail = () => {
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Tổng cộng: </strong></td>
-                                        <td>{orderDetail.totalAmount} VND</td>
+                                        <td>{orderDetail.totalAmount+ shippingMoney} VND</td>
                                     </tr>
                                     </tbody>
                                 </table>

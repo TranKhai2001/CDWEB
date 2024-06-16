@@ -126,7 +126,7 @@ const OrderConfirm = () => {
                                             </td>
                                             <td>
                                                 <div className="text-right">
-                                                    <span className="font-weight-bold"> {formatter(total + shippingMoney)}</span>
+                                                    <span className="font-weight-bold"> {formatter(total+shippingMoney)}</span>
                                                 </div>
                                             </td>
                                         </tr>

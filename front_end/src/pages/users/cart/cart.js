@@ -87,8 +87,11 @@ const Cart = () => {
 
     const handleQuantityChange = async (productId, newQuantity) => {
         const maxQuantity = productQuantities[productId];
-        if (newQuantity < 0 || newQuantity > maxQuantity) {
-            alert(`Số lượng sản phẩm mau không được lớn hơn số lượng sản phẩm còn lại ${maxQuantity}`);
+        if (newQuantity > maxQuantity) {
+            newQuantity = maxQuantity; // Automatically set to max quantity if exceeded
+        }
+        if (newQuantity < 0) {
+            alert("Số lượng không được nhỏ hơn 0");
             return;
         }
 
@@ -179,7 +182,7 @@ const Cart = () => {
                                                         type="number"
                                                         value={item.quantity}
                                                         onChange={(e) => handleQuantityChange(item.productId, parseInt(e.target.value))}
-                                                        max={productQuantities[item.productId]} // Set max quantity
+                                                        min="0"
                                                     />
                                                 </td>
                                                 <td className="product-total">{item.price * item.quantity} VND</td>
