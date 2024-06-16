@@ -54,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
             return null;
         }
     }
+
     @Override
     public void deleteProduct(Long productId) {
         Optional<Product> optionalProduct = productRepository.findById(productId);
@@ -74,6 +75,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getDescription(),
                 product.getPrice(),
                 product.getQuantityAvailable(),
+                product.getSold(),
                 product.getCategory().getName(),
                 product.getImageUrl(),
                 product.getWeight(),

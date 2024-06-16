@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import axios from 'axios';
 import "./style.scss";
-import { useNavigate } from 'react-router-dom';
+import {useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
+    const shippingMoney = 10000;
 
     useEffect(() => {
         axios.get('http://localhost:8080/api/order/history', {
@@ -43,14 +44,13 @@ const OrderHistory = () => {
                     <tr key={order.orderId}>
                         <td>{order.orderId}</td>
                         <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                        <td>{order.totalAmount}</td>
+                        <td>{order.totalAmount+shippingMoney}</td>
                         <td>{order.deliveryAddress}</td>
                         <td>{order.status}</td>
                         <td>{order.paymentStatus}</td>
                         <td>
                             <button className="action-button">Đã nhận được hàng</button>
                             <button className="action-button" onClick={() => handleDetailClick(order.orderId)}>Chi tiết</button>
-                            <button className="action-button">Mua lại</button>
                         </td>
                     </tr>
                 ))}
@@ -60,4 +60,4 @@ const OrderHistory = () => {
     );
 };
 
-export default OrderHistory;
+export default memo(OrderHistory);

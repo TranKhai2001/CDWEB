@@ -1,12 +1,9 @@
 import React, { memo, useEffect, useState } from "react";
 import "./style.scss";
-import { AiFillFacebook } from "react-icons/ai";
-import { AiOutlineInstagram } from "react-icons/ai";
-import { AiFillTwitterSquare } from "react-icons/ai";
-import { AiFillGooglePlusCircle } from "react-icons/ai";
+import { AiFillFacebook, AiOutlineInstagram, AiFillTwitterSquare, AiFillGooglePlusCircle } from "react-icons/ai";
 import { formatter } from "../../../utils/formatter";
 import axios from "axios";
-import {useNavigate, useParams} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const DetailProduct = () => {
     const { productId } = useParams();
@@ -23,7 +20,8 @@ const DetailProduct = () => {
                 console.error("There was an error fetching the product details!", error);
             });
     }, [productId]);
-    const handleAddToCart =  (productId) => {
+
+    const handleAddToCart = (productId) => {
         const cartItem = {
             productId: productId,
             quantity,
@@ -32,11 +30,21 @@ const DetailProduct = () => {
 
         axios.post('http://localhost:8080/api/cart/add', cartItem, { withCredentials: true })
             .then(response => {
+                // Handle successful response
             })
             .catch(error => {
                 console.error("There was an error adding the product to the cart!", error);
                 alert("Failed to add product to cart.");
             });
+    };
+
+    const handleQuantityChange = (e) => {
+        const value = Number(e.target.value);
+        if (value > product.quantityAvailable) {
+            setQuantity(product.quantityAvailable);
+        } else {
+            setQuantity(value);
+        }
     };
 
     if (!product) return <div>Loading...</div>;
@@ -64,7 +72,7 @@ const DetailProduct = () => {
                                         <input
                                             type="number"
                                             value={quantity}
-                                            onChange={(e) => setQuantity(Number(e.target.value))}
+                                            onChange={handleQuantityChange}
                                             min="1"
                                         />
                                     </div>
@@ -74,6 +82,7 @@ const DetailProduct = () => {
                             <ul>
                                 <li><b>Loại:</b> <span>{product.categoryName}</span></li>
                                 <li><b>Số lượng còn lại:</b> <span>{product.quantityAvailable}</span></li>
+                                <li><b>Số lượng đã bán:</b> <span>{product.sold}</span></li>
                                 <li><b>Trọng lượng:</b> <span>{product.weight} {product.unit}</span></li>
                                 <li><b>Share on</b>
                                     <div className="share">

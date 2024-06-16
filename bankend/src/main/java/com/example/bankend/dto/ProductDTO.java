@@ -17,6 +17,7 @@ public class ProductDTO {
     private String description;
     private int price;
     private int quantityAvailable;
+    private int sold;
     private String categoryName;
     private String imageUrl;
     private BigDecimal weight;

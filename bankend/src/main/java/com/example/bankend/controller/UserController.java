@@ -10,8 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class UserController {
@@ -47,12 +47,29 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
+    public ResponseEntity<Map<String, String>> register(@RequestBody RegisterDto registerDto) {
+        Map<String, String> errors = new HashMap<>();
+
+        if (userService.existsByUsername(registerDto.getUsername())) {
+            errors.put("username", "Tên tài khoản đã tồn tại.");
+        }
+        if (userService.existsByEmail(registerDto.getEmail())) {
+            errors.put("email", "Email đã tồn tại.");
+        }
+        if (userService.existsByPhoneNumber(registerDto.getPhoneNumber())) {
+            errors.put("phone", "Số điện thoại đã tồn tại.");
+        }
+
+        if (!errors.isEmpty()) {
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+
         boolean isRegistered = userService.register(registerDto);
         if (isRegistered) {
-            return new ResponseEntity<>("Registration successful", HttpStatus.CREATED);
+            return new ResponseEntity<>(HttpStatus.CREATED);
         } else {
-            return new ResponseEntity<>("Registration failed", HttpStatus.BAD_REQUEST);
+            errors.put("general", "Đăng ký không thành công, vui lòng thử lại.");
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
     }
 

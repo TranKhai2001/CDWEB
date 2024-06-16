@@ -7,11 +7,14 @@ import com.example.bankend.entity.*;
 import com.example.bankend.repository.CartRepository;
 import com.example.bankend.repository.OrderItemRepository;
 import com.example.bankend.repository.OrderRepository;
+import com.example.bankend.repository.ProductRepository;
+import com.example.bankend.service.EmailService;
 import com.example.bankend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +29,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private EmailService emailService;
 
     @Override
     public Order placeOrder(User user, OrderDTO orderDTO) {
@@ -43,28 +52,66 @@ public class OrderServiceImpl implements OrderService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         order.setTotalAmount(totalAmount);
 
-        // Save the order first to get the order ID
         order = orderRepository.save(order);
 
-        // Now create order items
         Order finalOrder = order;
         List<OrderItem> orderItems = cart.getItems().stream().map(cartItem -> {
+            Product product = cartItem.getProduct();
+            int quantityAvailable = product.getQuantityAvailable();
+            int quantityToBuy = cartItem.getQuantity();
+
+            if (quantityToBuy > quantityAvailable) {
+                throw new IllegalArgumentException("Số lượng '" + product.getName() + "' còn lại không đủ");
+            }
+
+            product.setQuantityAvailable(quantityAvailable - quantityToBuy);
+            product.setSold(product.getSold() + quantityToBuy);
+            productRepository.save(product);
+
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(finalOrder);
-            orderItem.setProduct(cartItem.getProduct());
-            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setProduct(product);
+            orderItem.setQuantity(quantityToBuy);
             orderItem.setPrice(cartItem.getPrice());
+
             return orderItem;
         }).collect(Collectors.toList());
 
         order.setItems(orderItems);
         orderItemRepository.saveAll(orderItems);
 
-        // Clear the cart after placing the order
         cart.getItems().clear();
         cartRepository.save(cart);
 
+        // Send email notification
+        sendOrderConfirmationEmail(user, order, orderItems);
+
         return order;
+    }
+
+    private void sendOrderConfirmationEmail(User user, Order order, List<OrderItem> orderItems) {
+        StringBuilder itemDetails = new StringBuilder();
+        for (OrderItem item : orderItems) {
+            itemDetails.append(item.getProduct().getName())
+                    .append(" (x").append(item.getQuantity()).append("), ");
+        }
+
+        // Tạo một BigDecimal từ 10,000
+        BigDecimal additionalAmount = BigDecimal.valueOf(10000);
+
+        // Cộng additionalAmount vào order.getTotalAmount()
+        BigDecimal totalAmountWithAddition = order.getTotalAmount().add(additionalAmount);
+
+        // Format totalAmountWithAddition với dấu phân cách hàng nghìn và không có dấu phẩy thập phân
+        DecimalFormat decimalFormat = new DecimalFormat("#,###");
+        String formattedTotalAmount = decimalFormat.format(totalAmountWithAddition);
+
+        String subject = "Xác nhận đơn hàng";
+        String text = "Quý khách đã đặt đơn hàng gồm: " + itemDetails.toString() +
+                "Tổng tiền: " + formattedTotalAmount + " VND" +
+                ". Mọi thông tin của đơn hàng sẽ được cập nhật qua email và web. Hãy chú ý theo dõi.";
+
+        emailService.sendOrderConfirmationEmail(user.getEmail(), subject, text);
     }
 
     @Override
@@ -76,7 +123,7 @@ public class OrderServiceImpl implements OrderService {
                             item.getProduct().getName(),
                             item.getQuantity(),
                             item.getPrice(),
-                            item.getProduct().getImageUrl())  // Thêm thông tin ảnh sản phẩm
+                            item.getProduct().getImageUrl())
             ).collect(Collectors.toList());
 
             return new OrderHistoryDTO(

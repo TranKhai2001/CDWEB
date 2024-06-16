@@ -2,9 +2,9 @@ package com.example.bankend.controller;
 
 import com.example.bankend.dto.CartItemDTO;
 import com.example.bankend.dto.CartItemDetailDTO;
-import com.example.bankend.entity.CartItem;
 import com.example.bankend.entity.User;
 import com.example.bankend.service.CartService;
+import com.example.bankend.service.ProductService;
 import com.example.bankend.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +23,9 @@ public class CartController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ProductService productService;
 
     @PostMapping("/add")
     public ResponseEntity<String> addCartItem(@RequestBody CartItemDTO cartItemDTO, HttpSession session) {
@@ -67,12 +70,30 @@ public class CartController {
             return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
         }
     }
+
     @DeleteMapping("/remove")
     public ResponseEntity<String> removeCartItem(@RequestParam Long productId, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             cartService.removeCartItem(user, productId);
             return new ResponseEntity<>("Product removed from cart", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PostMapping("/checkout")
+    public ResponseEntity<String> checkout(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            List<CartItemDetailDTO> cartDetails = cartService.getCartDetails(user);
+            for (CartItemDetailDTO item : cartDetails) {
+                if (item.getQuantity() > productService.getProductQuantityAvailable(item.getProductId())) {
+                    return new ResponseEntity<>("Số lượng sản phẩm " + item.getProductName() + " còn lại không đủ", HttpStatus.BAD_REQUEST);
+                }
+            }
+            // Process checkout (not implemented in this example)
+            return new ResponseEntity<>("Checkout successful", HttpStatus.OK);
         } else {
             return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
         }

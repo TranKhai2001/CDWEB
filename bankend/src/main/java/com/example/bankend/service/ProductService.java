@@ -9,4 +9,5 @@ public interface ProductService {
     ProductDTO getProductById(Long productId);
     List<ProductDTO> getActiveProducts();
     void deleteProduct(Long productId); // New method to delete a product
+
 }
