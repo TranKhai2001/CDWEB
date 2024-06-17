@@ -61,4 +61,31 @@
       background-color: #ddd;
     }
   }
+
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+
+    .page-number {
+      margin: 0 5px;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #f1f1f1;
+      transition: background-color 0.3s ease, color 0.3s ease;
+
+      &.active {
+        background-color: map-get($theme-colors, "main");
+        color: #fff;
+      }
+
+      &:hover {
+        background-color: darken(map-get($theme-colors, "main"), 10%);
+        color: #fff;
+      }
+    }
+  }
 }

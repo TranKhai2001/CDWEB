@@ -12,4 +12,5 @@ public interface OrderService {
     Order placeOrder(User user, OrderDTO orderDTO);
     List<OrderHistoryDTO> getOrderHistory(User user);
     OrderDetailDTO getOrderDetail(Long orderId, User user);
+    Order reorder(User user, Long orderId);
 }
