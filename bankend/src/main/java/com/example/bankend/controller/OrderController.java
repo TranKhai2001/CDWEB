@@ -58,4 +58,19 @@ public class OrderController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
+    @PostMapping("/reorder/{orderId}")
+    public ResponseEntity<?> reorder(@PathVariable Long orderId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            try {
+                Order newOrder = orderService.reorder(user, orderId);
+                return new ResponseEntity<>(newOrder, HttpStatus.CREATED);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
 }

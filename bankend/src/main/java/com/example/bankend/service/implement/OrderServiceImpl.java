@@ -167,4 +167,105 @@ public class OrderServiceImpl implements OrderService {
                 items
         );
     }
+
+//    @Override
+//    public Order reorder(User user, Long orderId) {
+//        Order oldOrder = orderRepository.findById(orderId)
+//                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+//
+//        if (!oldOrder.getUser().getUserId().equals(user.getUserId())) {
+//            throw new IllegalArgumentException("Unauthorized access to reorder");
+//        }
+//
+//        OrderDTO orderDTO = new OrderDTO();
+//        orderDTO.setDeliveryAddress(oldOrder.getDeliveryAddress());
+//        orderDTO.setPaymentMethod("Reorder"); // Hoặc giữ nguyên phương thức thanh toán cũ
+//
+//        // Tạo một đơn hàng mới dựa trên thông tin đơn hàng cũ
+//        Order newOrder = new Order();
+//        newOrder.setUser(user);
+//        newOrder.setDeliveryAddress(orderDTO.getDeliveryAddress());
+//        newOrder.setStatus(Order.OrderStatus.PENDING);
+//        newOrder.setPaymentStatus(Order.PaymentStatus.PENDING);
+//
+//        BigDecimal totalAmount = oldOrder.getItems().stream()
+//                .map(item -> item.getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+//                .reduce(BigDecimal.ZERO, BigDecimal::add);
+//        newOrder.setTotalAmount(totalAmount);
+//
+//        newOrder = orderRepository.save(newOrder);
+//
+//        Order finalNewOrder = newOrder;
+//        List<OrderItem> orderItems = oldOrder.getItems().stream().map(oldItem -> {
+//            Product product = oldItem.getProduct();
+//            int quantityAvailable = product.getQuantityAvailable();
+//            int quantityToBuy = oldItem.getQuantity();
+//
+//            if (quantityToBuy > quantityAvailable) {
+//                throw new IllegalArgumentException("Số lượng '" + product.getName() + "' còn lại không đủ");
+//            }
+//
+//            product.setQuantityAvailable(quantityAvailable - quantityToBuy);
+//            product.setSold(product.getSold() + quantityToBuy);
+//            productRepository.save(product);
+//
+//            OrderItem newItem = new OrderItem();
+//            newItem.setOrder(finalNewOrder);
+//            newItem.setProduct(product);
+//            newItem.setQuantity(quantityToBuy);
+//            newItem.setPrice(oldItem.getPrice());
+//
+//            return newItem;
+//        }).collect(Collectors.toList());
+//
+//        newOrder.setItems(orderItems);
+//        orderItemRepository.saveAll(orderItems);
+//
+//        // Send email notification
+//        sendOrderConfirmationEmail(user, newOrder, orderItems);
+//
+//        return newOrder;
+//    }
+
+    @Override
+    public Order reorder(User user, Long orderId) {
+        Order oldOrder = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        if (!oldOrder.getUser().getUserId().equals(user.getUserId())) {
+            throw new IllegalArgumentException("Unauthorized access to reorder");
+        }
+
+        // Tìm giỏ hàng hiện tại của người dùng
+        Cart cart = cartRepository.findByUserAndStatus(user, Cart.CartStatus.ACTIVE)
+                .orElseGet(() -> {
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    newCart.setStatus(Cart.CartStatus.ACTIVE);
+                    return cartRepository.save(newCart);
+                });
+
+        // Thêm sản phẩm từ đơn hàng cũ vào giỏ hàng
+        oldOrder.getItems().forEach(oldItem -> {
+            Product product = oldItem.getProduct();
+            int quantityAvailable = product.getQuantityAvailable();
+            int quantityToBuy = oldItem.getQuantity();
+
+            if (quantityToBuy > quantityAvailable) {
+                throw new IllegalArgumentException("Số lượng '" + product.getName() + "' còn lại không đủ");
+            }
+
+            CartItem cartItem = new CartItem();
+            cartItem.setCart(cart);
+            cartItem.setProduct(product);
+            cartItem.setQuantity(quantityToBuy);
+            cartItem.setPrice(oldItem.getPrice());
+
+            cart.getItems().add(cartItem);
+        });
+
+        cartRepository.save(cart);
+
+        return null; // Trả về null hoặc có thể trả về một thông báo nào đó tùy vào yêu cầu của bạn
+    }
 }

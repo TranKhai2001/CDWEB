@@ -1,11 +1,12 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import "./style.scss";
 
 const OrderHistoryDetail = () => {
     const { orderId } = useParams();
     const [orderDetail, setOrderDetail] = useState(null);
+    const navigate = useNavigate();
     const shippingMoney = 10000;
 
     useEffect(() => {
@@ -19,6 +20,19 @@ const OrderHistoryDetail = () => {
                 console.error('There was an error fetching the order detail!', error);
             });
     }, [orderId]);
+
+    const handleReorder = () => {
+        axios.post(`http://localhost:8080/api/order/reorder/${orderId}`, {}, {
+            withCredentials: true
+        })
+            .then(response => {
+                console.log('Order placed successfully:', response.data);
+                navigate('/gio-hang');
+            })
+            .catch(error => {
+                console.error('There was an error reordering!', error);
+            });
+    };
 
     if (!orderDetail) {
         return <div>Loading...</div>;
@@ -76,13 +90,13 @@ const OrderHistoryDetail = () => {
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Tổng cộng: </strong></td>
-                                        <td>{orderDetail.totalAmount+ shippingMoney} VND</td>
+                                        <td>{orderDetail.totalAmount + shippingMoney} VND</td>
                                     </tr>
                                     </tbody>
                                 </table>
                                 <div className="cart-buttons">
                                     <a href="/lich-su-don-hang" className="boxed-btn">Trở về</a>
-                                    <a href="" className="boxed-btn black">Mua lại</a>
+                                    <a onClick={handleReorder} className="boxed-btn">Mua lại</a>
                                 </div>
                             </div>
                         </div>

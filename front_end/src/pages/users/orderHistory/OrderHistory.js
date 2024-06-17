@@ -5,6 +5,8 @@ import {useNavigate } from 'react-router-dom';
 
 const OrderHistory = () => {
     const [orders, setOrders] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const ordersPerPage = 5;
     const navigate = useNavigate();
     const shippingMoney = 10000;
 
@@ -24,8 +26,21 @@ const OrderHistory = () => {
         navigate(`/chi-tiet-don-hang/${orderId}`);
     };
 
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+    };
+
+    const indexOfLastOrder = currentPage * ordersPerPage;
+    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
+    const currentOrders = orders.slice(indexOfFirstOrder, indexOfLastOrder);
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(orders.length / ordersPerPage); i++) {
+        pageNumbers.push(i);
+    }
+
     return (
-        <div className="order-history-container container ">
+        <div className="order-history-container container">
             <h2>Lịch Sử Đơn Hàng</h2>
             <table className="order-history-table">
                 <thead>
@@ -35,16 +50,16 @@ const OrderHistory = () => {
                     <th>Giá đơn hàng</th>
                     <th>Địa chỉ giao hàng</th>
                     <th>Trạng thái đơn hàng</th>
-                    <th>trạng thái thanh toán</th>
+                    <th>Trạng thái thanh toán</th>
                     <th>Tùy chọn</th>
                 </tr>
                 </thead>
                 <tbody>
-                {orders.map(order => (
+                {currentOrders.map(order => (
                     <tr key={order.orderId}>
                         <td>{order.orderId}</td>
                         <td>{new Date(order.orderDate).toLocaleDateString()}</td>
-                        <td>{order.totalAmount+shippingMoney}</td>
+                        <td>{order.totalAmount + shippingMoney}</td>
                         <td>{order.deliveryAddress}</td>
                         <td>{order.status}</td>
                         <td>{order.paymentStatus}</td>
@@ -56,6 +71,17 @@ const OrderHistory = () => {
                 ))}
                 </tbody>
             </table>
+            <div className="pagination">
+                {pageNumbers.map(number => (
+                    <button
+                        key={number}
+                        onClick={() => handlePageChange(number)}
+                        className={`page-number ${currentPage === number ? 'active' : ''}`}
+                    >
+                        {number}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };
