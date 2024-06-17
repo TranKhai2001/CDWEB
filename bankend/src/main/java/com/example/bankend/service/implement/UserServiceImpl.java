@@ -2,10 +2,8 @@ package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.LoginDto;
 import com.example.bankend.dto.RegisterDto;
-import com.example.bankend.entity.Gender;
-import com.example.bankend.entity.User;
-import com.example.bankend.entity.UserRole;
-import com.example.bankend.entity.UserStatus;
+import com.example.bankend.entity.*;
+import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.repository.UserRepository;
 import com.example.bankend.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -24,6 +22,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private ProductRepository productRepository;
 
     @Autowired
     private HttpSession session;
@@ -78,11 +78,33 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUserById(Long id) {
-        userRepository.deleteById(id);
+        Optional<User> userOptional = getUserById(id);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(UserStatus.INACTIVE);
+            userRepository.save(user);
+    }
     }
     @Override
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.findByUsername(username) != null;
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.findByEmail(email) != null;
+    }
+
+    @Override
+    public boolean existsByPhoneNumber(String phoneNumber) {
+        return userRepository.findByPhoneNumber(phoneNumber) != null;
+    }
+
 }

@@ -28,11 +28,11 @@ const ListUser = () => {
     const deleteUser = async (id) => {
         try {
             const response = await fetch(`http://localhost:8080/users/${id}`, {
-                method: 'DELETE',
+                method: 'PUT',
             });
 
             if (response.ok) {
-                setUsers(users.filter(user => user.userId !== id));
+                setUsers(users.map(user => user.userId === id ? { ...user, status: 'INACTIVE' } : user));
             } else {
                 console.error('Failed to delete user');
             }

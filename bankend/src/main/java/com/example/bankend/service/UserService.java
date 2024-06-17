@@ -13,6 +13,8 @@ public interface UserService {
     List<User> getAllUsers(); // Add this method
     void deleteUserById(Long id); // Add this method
     Optional<User> getUserById(Long id); // Thêm phương thức này
-
+    boolean existsByUsername(String username);
+    boolean existsByEmail(String email);
+    boolean existsByPhoneNumber(String phoneNumber);
 
 }
