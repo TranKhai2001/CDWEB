@@ -10,6 +10,7 @@ import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.service.ProductService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,10 @@ public class ProductServiceImpl implements ProductService {
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
     private CategoryRepository categoryRepository;
 
-    public ProductServiceImpl(ProductRepository productRepository) {
+    @Autowired
+    public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository) {
         this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     @Override
@@ -76,6 +79,33 @@ public class ProductServiceImpl implements ProductService {
     public int getProductQuantityAvailable(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
         return product.map(Product::getQuantityAvailable).orElse(0);
+    }
+
+    @Override
+    public void addProduct(ProductDTO productDTO) {
+        try {
+            Product product = new Product();
+
+            // Map DTO fields to Entity
+            product.setName(productDTO.getName());
+            product.setDescription(productDTO.getDescription());
+            product.setPrice(productDTO.getPrice());
+            product.setQuantityAvailable(productDTO.getQuantityAvailable());
+            product.setSold(0); // Assuming new product starts with 0 sold
+            product.setCategory(categoryRepository.findByName(productDTO.getCategoryName()));
+            product.setImageUrl(productDTO.getImageUrl());
+            product.setWeight(productDTO.getWeight());
+            product.setUnit(productDTO.getUnit());
+            product.setStatus(productDTO.getStatus());
+            product.setCreatedAt(new Timestamp(System.currentTimeMillis()));
+
+            // Save product to database
+            productRepository.save(product);
+        } catch (Exception e) {
+            logger.error("Error adding product", e);
+            throw new RuntimeException("Error adding product: " + e.getMessage());
+            // Hoặc có thể sử dụng các mã lỗi HTTP như HttpStatus.INTERNAL_SERVER_ERROR
+        }
     }
 
 

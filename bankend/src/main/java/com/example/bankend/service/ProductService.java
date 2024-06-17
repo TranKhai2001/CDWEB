@@ -10,4 +10,5 @@ public interface ProductService {
     List<ProductDTO> getActiveProducts();
     void deleteProduct(Long productId); // New method to delete a product
     int getProductQuantityAvailable(Long productId);
+    void addProduct(ProductDTO productDTO);
 }

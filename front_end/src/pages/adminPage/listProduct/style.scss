@@ -24,6 +24,18 @@
   }
 }
 
+.list-product{
+  th, td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+  }
+
+  th {
+    background-color: map-get($theme-colors, "main");
+    color: #fff;
+  }
+}
+
 .add-product {
   margin-top: 20px;
   padding: 20px;
