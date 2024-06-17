@@ -46,8 +46,7 @@ const ListUser = () => {
             <div className="section-title">
                 <h2>Danh sách người dùng</h2>
             </div>
-            <table style={{ width: "100%" }}>
-                <thead>
+            <table style={{ width: "100%" }} className="list-user">
                 <tr>
                     <th>Xóa</th>
                     <th>STT</th>
@@ -60,8 +59,6 @@ const ListUser = () => {
                     <th>Trạng thái</th>
                     <th>Chi tiết</th>
                 </tr>
-                </thead>
-                <tbody>
                 {users.map((user, index) => (
                     <tr key={user.userId}>
                         <td onClick={() => deleteUser(user.userId)}>-</td>
@@ -78,7 +75,6 @@ const ListUser = () => {
                         </td>
                     </tr>
                 ))}
-                </tbody>
             </table>
         </div>
     );

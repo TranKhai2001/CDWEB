@@ -1,5 +1,4 @@
 import React, {memo, useEffect, useState} from "react";
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import "./style.scss";
 import {Link, useNavigate} from "react-router-dom";
@@ -40,12 +39,44 @@ const ListProduct = () =>{
             });
     };
 
+    const handleAddProduct = () => {
+        const productData = {
+            name: document.getElementById('name').value,
+            description: document.getElementById('description').value,
+            price: document.getElementById('price').value,
+            quantityAvailable: document.getElementById('quantityAvailable').value,
+            categoryName: document.getElementById('categoryName').value,
+            imageUrl: document.getElementById('imageUrl').value,
+            weight: document.getElementById('weight').value,
+            unit: document.getElementById('unit').value,
+            status: document.getElementById('status').value
+        };
+
+        axios.post('http://localhost:8080/api/products/add', productData)
+            .then(response => {
+                console.log("Product added successfully");
+                // Optionally, navigate to a different page or refresh product list
+                // For simplicity, we can reload the entire product list
+                axios.get('http://localhost:8080/api/products')
+                    .then(response => {
+                        setProducts(response.data);
+                    })
+                    .catch(error => {
+                        console.error("Error refreshing product list after adding!", error);
+                    });
+            })
+            .catch(error => {
+                console.error("Error adding product!", error);
+            });
+    };
+
+
     return (
         <div className="container">
             <div className="section-title">
                 <h2>Danh sách sản phẩm</h2>
             </div>
-            <table style={{width:"100%"}}>
+            <table style={{width:"100%"}} className="list-product">
                 <tr>
                     <th>Xóa</th>
                     <th>STT</th>
@@ -78,42 +109,45 @@ const ListProduct = () =>{
                 </div>
                 <div>
                     <label>Tên sản phẩm:</label>
-                    <input type="text"/>
+                    <input type="text" id="name"/>
                 </div>
                 <div>
                     <label>Mô tả:</label>
-                    <input type="text"/>
+                    <input type="text" id="description"/>
                 </div>
                 <div>
                     <label>Giá:</label>
-                    <input type="text"/>
+                    <input type="text" id="price"/>
                 </div>
                 <div>
                     <label>Số lượng:</label>
-                    <input type="text"/>
+                    <input type="text"  id="quantityAvailable" />
                 </div>
                 <div>
                     <label>Loại:</label>
-                    <input type="text"/>
+                    <input type="text" id="categoryName" />
                 </div>
                 <div>
                     <label>Link ảnh:</label>
-                    <input type="text"/>
+                    <input type="text" id="imageUrl"/>
                 </div>
                 <div>
                     <label>Trọng lượng:</label>
-                    <input type="text"/>
+                    <input type="text" id="weight"/>
                 </div>
                 <div>
                     <label>Đơn vị:</label>
-                    <input type="text"/>
+                    <input type="text" id="unit" />
                 </div>
                 <div>
                     <label>Trạng thái:</label>
-                    <input type="text"/>
+                    <select id="status">
+                        <option value="ACTIVE">Active</option>
+                        <option value="INACTIVE">Inactive</option>
+                    </select>
                 </div>
                 <div>
-                    <button>Thêm sản phẩm</button>
+                    <button onClick={handleAddProduct} >Thêm sản phẩm</button>
                 </div>
             </div>
         </div>

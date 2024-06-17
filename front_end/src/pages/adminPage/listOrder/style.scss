@@ -22,4 +22,15 @@
     content: "";
     margin: 0 auto;
   }
+  .list-order{
+    th, td {
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+    }
+
+    th {
+      background-color: map-get($theme-colors, "main");
+      color: #fff;
+    }
+  }
 }

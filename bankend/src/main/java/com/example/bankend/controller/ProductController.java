@@ -51,5 +51,19 @@ public class ProductController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    @GetMapping("/{productId}/quantity")
+    public ResponseEntity<Integer> getProductQuantityAvailable(@PathVariable Long productId) {
+        int quantityAvailable = productService.getProductQuantityAvailable(productId);
+        return ResponseEntity.ok(quantityAvailable);
+    }
 
+    @PostMapping("/add")
+    public ResponseEntity<Void> addProduct(@RequestBody ProductDTO productDTO) {
+        try {
+            productService.addProduct(productDTO);
+            return new ResponseEntity<>(HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

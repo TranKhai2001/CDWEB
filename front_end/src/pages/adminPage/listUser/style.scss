@@ -1,6 +1,7 @@
 @use "sass:map";
 @import "src/style/pages/theme";
 @import "src/style/pages/all";
+
 .section-title {
   margin-bottom: 50px;
   text-align: center;
@@ -20,5 +21,17 @@
     background: map.get($theme-colors, "main");
     content: "";
     margin: 0 auto;
+  }
+
+}
+.list-user {
+  margin-bottom: 20px;
+  th {
+    background-color: map-get($theme-colors, "main");
+    color: #fff;
+  }
+  th, td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
   }
 }
