@@ -1,9 +1,11 @@
 package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.ProductDTO;
+import com.example.bankend.entity.Category;
 import com.example.bankend.entity.CategoryStatus;
 import com.example.bankend.entity.Product;
 import com.example.bankend.entity.ProductStatus;
+import com.example.bankend.repository.CategoryRepository;
 import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.service.ProductService;
 import org.slf4j.Logger;
@@ -11,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -20,6 +23,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
+    private CategoryRepository categoryRepository;
 
     public ProductServiceImpl(ProductRepository productRepository) {
         this.productRepository = productRepository;
@@ -67,6 +71,13 @@ public class ProductServiceImpl implements ProductService {
             throw new RuntimeException("Product not found");
         }
     }
+
+    @Override
+    public int getProductQuantityAvailable(Long productId) {
+        Optional<Product> product = productRepository.findById(productId);
+        return product.map(Product::getQuantityAvailable).orElse(0);
+    }
+
 
     private ProductDTO convertToDto(Product product) {
         return new ProductDTO(
