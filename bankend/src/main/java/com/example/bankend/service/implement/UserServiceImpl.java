@@ -1,9 +1,6 @@
 package com.example.bankend.service.implement;
 
-import com.example.bankend.dto.LoginDto;
-import com.example.bankend.dto.RegisterDto;
-import com.example.bankend.dto.UpdateProfileDto;
-import com.example.bankend.dto.UserProfileDto;
+import com.example.bankend.dto.*;
 import com.example.bankend.entity.*;
 import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.repository.UserRepository;
@@ -132,4 +129,18 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    @Override
+    @Transactional
+    public boolean changePassword(Long userId, ChangePasswordDto changePasswordDto) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
+                user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+                userRepository.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
 }

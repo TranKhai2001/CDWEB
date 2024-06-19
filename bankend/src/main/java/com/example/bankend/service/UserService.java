@@ -1,5 +1,7 @@
 package com.example.bankend.service;
 
+
+import com.example.bankend.dto.ChangePasswordDto;
 import com.example.bankend.dto.LoginDto;
 import com.example.bankend.dto.RegisterDto;
 import com.example.bankend.dto.UpdateProfileDto;
@@ -19,4 +21,5 @@ public interface UserService {
     boolean existsByPhoneNumber(String phoneNumber);
     boolean updateProfile(Long userId, UpdateProfileDto updateProfileDto);
 
+    boolean changePassword(Long userId, ChangePasswordDto changePasswordDto);
 }
