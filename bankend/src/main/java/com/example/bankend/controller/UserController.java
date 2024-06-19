@@ -1,9 +1,6 @@
 package com.example.bankend.controller;
 
-import com.example.bankend.dto.LoginDto;
-import com.example.bankend.dto.RegisterDto;
-import com.example.bankend.dto.UpdateProfileDto;
-import com.example.bankend.dto.UserProfileDto;
+import com.example.bankend.dto.*;
 import com.example.bankend.entity.User;
 import com.example.bankend.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -134,4 +131,17 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordDto changePasswordDto, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser != null) {
+            boolean isChanged = userService.changePassword(currentUser.getUserId(), changePasswordDto);
+            if (isChanged) {
+                return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Current password is incorrect", HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+    }
 }
