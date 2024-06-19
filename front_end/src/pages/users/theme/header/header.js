@@ -172,7 +172,7 @@ const Header = () => {
                                         <div className="dropdown_menu">
                                             <Link to={ROUTERS.USER.ORDERHISTORY}>Lịch sử đơn hàng</Link>
                                             <Link to={ROUTERS.USER.PROFILE}>Thông tin cá nhân</Link>
-                                            <Link to={ROUTERS.USER.CHANGE_PASSWORD}>Đổi mật khẩu</Link>
+                                            <Link to={ROUTERS.USER.CHANGEPASSWORD}>Đổi mật khẩu</Link>
                                         </div>
                                     )}
                                 </li>
@@ -255,7 +255,7 @@ const Header = () => {
                                             <div className="dropdown_menu">
                                                 <Link to={ROUTERS.USER.ORDERHISTORY}>Lịch sử đơn hàng</Link>
                                                 <Link to={ROUTERS.USER.PROFILE}>Thông tin cá nhân</Link>
-                                                <Link to={ROUTERS.USER.CHANGE_PASSWORD}>Đổi mật khẩu</Link>
+                                                <Link to={ROUTERS.USER.CHANGEPASSWORD}>Đổi mật khẩu</Link>
                                             </div>
                                         )}
                                     </li>

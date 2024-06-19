@@ -2,6 +2,8 @@ package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.LoginDto;
 import com.example.bankend.dto.RegisterDto;
+import com.example.bankend.dto.UpdateProfileDto;
+import com.example.bankend.dto.UserProfileDto;
 import com.example.bankend.entity.*;
 import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.repository.UserRepository;
@@ -105,6 +107,29 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean existsByPhoneNumber(String phoneNumber) {
         return userRepository.findByPhoneNumber(phoneNumber) != null;
+    }
+
+    @Override
+    @Transactional
+    public boolean updateProfile(Long userId, UpdateProfileDto updateProfileDto) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            // Kiểm tra số điện thoại có bị trùng không
+            if (!user.getPhoneNumber().equals(updateProfileDto.getPhoneNumber()) && userRepository.findByPhoneNumber(updateProfileDto.getPhoneNumber()) != null) {
+                return false;
+            }
+
+            user.setFullName(updateProfileDto.getFullName());
+            user.setPhoneNumber(updateProfileDto.getPhoneNumber());
+            user.setGender(Gender.valueOf(updateProfileDto.getGender()));
+            user.setDateOfBirth(updateProfileDto.getDateOfBirth());
+
+            userRepository.save(user);
+            return true;
+        }
+        return false;
     }
 
 }
