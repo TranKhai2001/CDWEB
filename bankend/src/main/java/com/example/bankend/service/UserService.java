@@ -2,6 +2,7 @@ package com.example.bankend.service;
 
 import com.example.bankend.dto.LoginDto;
 import com.example.bankend.dto.RegisterDto;
+import com.example.bankend.dto.UpdateProfileDto;
 import com.example.bankend.entity.User;
 
 import java.util.List;
@@ -16,5 +17,6 @@ public interface UserService {
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);
     boolean existsByPhoneNumber(String phoneNumber);
+    boolean updateProfile(Long userId, UpdateProfileDto updateProfileDto);
 
 }

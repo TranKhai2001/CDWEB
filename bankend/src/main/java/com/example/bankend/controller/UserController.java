@@ -2,6 +2,8 @@ package com.example.bankend.controller;
 
 import com.example.bankend.dto.LoginDto;
 import com.example.bankend.dto.RegisterDto;
+import com.example.bankend.dto.UpdateProfileDto;
+import com.example.bankend.dto.UserProfileDto;
 import com.example.bankend.entity.User;
 import com.example.bankend.service.UserService;
 import jakarta.servlet.http.HttpSession;
@@ -90,6 +92,46 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUserById(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<UserProfileDto> getProfile(HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            UserProfileDto userProfileDto = new UserProfileDto();
+            userProfileDto.setEmail(user.getEmail());
+            userProfileDto.setFullName(user.getFullName());
+            userProfileDto.setPhoneNumber(user.getPhoneNumber());
+            userProfileDto.setGender(user.getGender().name());
+            userProfileDto.setDateOfBirth(user.getDateOfBirth());
+
+            return new ResponseEntity<>(userProfileDto, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateProfile(@RequestBody UpdateProfileDto updateProfileDto, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser != null) {
+            boolean isUpdated = userService.updateProfile(currentUser.getUserId(), updateProfileDto);
+            if (isUpdated) {
+                currentUser = userService.getUserById(currentUser.getUserId()).orElse(null);
+                if (currentUser != null) {
+                    session.setAttribute("user", currentUser);
+                    UserProfileDto updatedProfileDto = new UserProfileDto();
+                    updatedProfileDto.setEmail(currentUser.getEmail());
+                    updatedProfileDto.setFullName(currentUser.getFullName());
+                    updatedProfileDto.setPhoneNumber(currentUser.getPhoneNumber());
+                    updatedProfileDto.setGender(currentUser.getGender().name());
+                    updatedProfileDto.setDateOfBirth(currentUser.getDateOfBirth());
+                    return new ResponseEntity<>(updatedProfileDto, HttpStatus.OK);
+                }
+            }
+            return new ResponseEntity<>("Phone number already exists", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
     }
 
 }

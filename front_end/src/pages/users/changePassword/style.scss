@@ -1,0 +1,148 @@
+@use "sass:map";
+@import "src/style/pages/theme";
+@import "src/style/pages/all";
+
+.changepassword-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  //background: url('') no-repeat center center;
+  background-size: cover;
+  padding: 20px;
+
+  .changepassword-form {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 40px 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px;
+    text-align: center;
+
+    h2 {
+      margin-bottom: 20px;
+      color: map-get($theme-colors, "main");
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      input[type='email'],
+      input[type='tel'],
+      input[type='text'],
+      input[type='password'],
+      select,
+      input[type='date'] {
+        width: 100%;
+        max-width: 90%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+    }
+
+    select {
+      width: 100%;
+      max-width: 90%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    .button-submit {
+      width: 70%;
+      padding: 12px;
+      background-color: map-get($theme-colors, "main");
+      border: none;
+      color: #fff;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+      text-transform: uppercase;
+      transition: background-color 0.3s ease;
+      margin-top: 10px;
+
+
+      &:hover {
+        background-color: darken(map-get($theme-colors, "main"), 10%);
+      }
+    }
+
+    .links {
+      margin-top: 15px;
+      display: flex;
+      justify-content: space-between;
+
+      a {
+        color: map-get($theme-colors, "main");
+        text-decoration: none;
+        font-size: 14px;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: darken(map-get($theme-colors, "main"), 10%);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .changepassword-container {
+    padding: 20px;
+
+    .register-form {
+      padding: 30px 20px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .changepassword-container {
+    padding: 10px;
+
+    .register-form {
+      padding: 20px 15px;
+      width: 100%;
+      max-width: 90%;
+
+      .form-group {
+        input[type='email'],
+        input[type='tel'],
+        input[type='text'],
+        input[type='password'],
+        select,
+        input[type='date'] {
+          padding: 10px;
+          font-size: 14px;
+        }
+      }
+
+      .button-submit {
+        padding: 10px;
+        font-size: 14px;
+
+      }
+
+      .links {
+        flex-direction: column;
+        align-items: center;
+
+        a {
+          margin-bottom: 10px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+}
