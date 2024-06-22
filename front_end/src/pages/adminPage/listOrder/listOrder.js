@@ -9,6 +9,8 @@ const ListOrder = () => {
     const [orders, setOrders] = useState([]);
     const [filteredOrders, setFilteredOrders] = useState([]);
     const [selectedTab, setSelectedTab] = useState('PENDING');
+    const [currentPage, setCurrentPage] = useState(0);
+    const ordersPerPage = 10;
 
     useEffect(() => {
         // Fetch orders from the backend API
@@ -25,6 +27,7 @@ const ListOrder = () => {
         // Filter orders based on the selected tab
         const filtered = orders.filter(order => order.status === selectedTab);
         setFilteredOrders(filtered);
+        setCurrentPage(0);  // Reset to first page whenever filter changes
     }, [orders, selectedTab]);
 
     const handleTabSelect = (index) => {
@@ -44,6 +47,13 @@ const ListOrder = () => {
             });
     };
 
+    const handlePageClick = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const pageCount = Math.ceil(filteredOrders.length / ordersPerPage);
+    const displayedOrders = filteredOrders.slice(currentPage * ordersPerPage, (currentPage + 1) * ordersPerPage);
+
     return (
         <div className="container">
             <div className="featured">
@@ -58,21 +68,22 @@ const ListOrder = () => {
                         </TabList>
 
                         <TabPanel>
-                            <OrderTable orders={filteredOrders} onStatusChange={handleStatusChange} />
+                            <OrderTable orders={displayedOrders} onStatusChange={handleStatusChange} />
                         </TabPanel>
                         <TabPanel>
-                            <OrderTable orders={filteredOrders} onStatusChange={handleStatusChange} />
+                            <OrderTable orders={displayedOrders} onStatusChange={handleStatusChange} />
                         </TabPanel>
                         <TabPanel>
-                            <OrderTable orders={filteredOrders} onStatusChange={handleStatusChange} />
+                            <OrderTable orders={displayedOrders} onStatusChange={handleStatusChange} />
                         </TabPanel>
                         <TabPanel>
-                            <OrderTable orders={filteredOrders} onStatusChange={handleStatusChange} />
+                            <OrderTable orders={displayedOrders} onStatusChange={handleStatusChange} />
                         </TabPanel>
                         <TabPanel>
-                            <OrderTable orders={filteredOrders} onStatusChange={handleStatusChange} />
+                            <OrderTable orders={displayedOrders} onStatusChange={handleStatusChange} />
                         </TabPanel>
                     </Tabs>
+                    <Pagination pageCount={pageCount} onPageChange={handlePageClick} currentPage={currentPage} />
                 </div>
             </div>
         </div>
@@ -83,7 +94,6 @@ const OrderTable = ({ orders, onStatusChange }) => (
     <table style={{ width: "100%" }} className="list-order">
         <thead>
         <tr>
-            <th>Xóa</th>
             <th>STT</th>
             <th>Họ tên</th>
             <th>SĐT</th>
@@ -97,30 +107,57 @@ const OrderTable = ({ orders, onStatusChange }) => (
         <tbody>
         {orders.map((order, index) => (
             <tr key={order.orderId}>
-                <td>-</td>
                 <td>{index + 1}</td>
                 <td>{order.userName}</td>
                 <td>{order.phoneNumber}</td>
                 <td>{new Date(order.orderDate).toLocaleString()}</td>
                 <td>{order.deliveryAddress}</td>
-                <td>{formatter(order.totalAmount)}</td>
+                <td>{formatter(order.totalAmount + 10000)}</td>
                 <td>
-                    <select
-                        value={order.status}
-                        onChange={(e) => onStatusChange(order.orderId, e.target.value)}
-                    >
-                        <option value="PENDING">PENDING</option>
-                        <option value="PROCESSING">PROCESSING</option>
-                        <option value="SHIPPED">SHIPPED</option>
-                        <option value="DELIVERED">DELIVERED</option>
-                        <option value="CANCELLED">CANCELLED</option>
-                    </select>
+                    {order.status === 'PENDING' && (
+                        <>
+                            <button className="action-buttons" onClick={() => onStatusChange(order.orderId, 'PROCESSING')}>Xác nhận</button>
+                            <button className="action-buttons" onClick={() => onStatusChange(order.orderId, 'CANCELLED')}>Hủy</button>
+                        </>
+                    )}
+                    {order.status === 'PROCESSING' && (
+                        <>
+                            <button className="action-buttons" onClick={() => onStatusChange(order.orderId, 'SHIPPED')}>Giao</button>
+                            <button className="action-buttons" onClick={() => onStatusChange(order.orderId, 'CANCELLED')}>Hủy</button>
+                        </>
+                    )}
+                    {order.status === 'SHIPPED' && (
+                        <>
+                            <button className="action-buttons" onClick={() => onStatusChange(order.orderId, 'DELIVERED')}>Giao hàng thành công</button>
+                            <button className="action-buttons" onClick={() => onStatusChange(order.orderId, 'CANCELLED')}>Hủy</button>
+                        </>
+                    )}
+                    {order.status === 'CANCELLED' && (
+                        <span>Đơn hàng đã bị hủy</span>
+                    )}
+                    {order.status === 'DELIVERED' && (
+                        <span>Đã giao hàng thành công</span>
+                    )}
                 </td>
                 <td>{order.paymentStatus === 'PAID' ? 'Đã thanh toán' : 'Chưa thanh toán'}</td>
             </tr>
         ))}
         </tbody>
     </table>
+);
+
+const Pagination = ({ pageCount, onPageChange, currentPage }) => (
+    <div className="pagination">
+        {[...Array(pageCount)].map((_, index) => (
+            <button
+                key={index}
+                className={`page-number ${index === currentPage ? 'active' : ''}`}
+                onClick={() => onPageChange(index)}
+            >
+                {index + 1}
+            </button>
+        ))}
+    </div>
 );
 
 export default memo(ListOrder);
