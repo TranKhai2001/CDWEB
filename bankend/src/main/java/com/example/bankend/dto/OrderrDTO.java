@@ -14,12 +14,14 @@ import java.util.List;
 public class OrderrDTO {
     private Long orderId;
     private String userName; // New field for user's name
+    private String phoneNumber;
     private Timestamp orderDate;
     private BigDecimal totalAmount;
     private String deliveryAddress;
     private Order.OrderStatus status;
     private Order.PaymentStatus paymentStatus;
-    private List<OrderHistoryDTO.OrderItemDTO> items;
+
+
 
     @Data
     @NoArgsConstructor

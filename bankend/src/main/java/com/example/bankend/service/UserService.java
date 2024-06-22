@@ -14,7 +14,7 @@ public interface UserService {
     User login(LoginDto loginDto);
     boolean register(RegisterDto registerDto);
     List<User> getAllUsers(); // Add this method
-    void deleteUserById(Long id); // Add this method
+    void toggleUserStatusById(Long id); // Add this method
     Optional<User> getUserById(Long id); // Thêm phương thức này
     boolean existsByUsername(String username);
     boolean existsByEmail(String email);

@@ -11,6 +11,8 @@ import com.example.bankend.repository.OrderRepository;
 import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.service.EmailService;
 import com.example.bankend.service.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +20,8 @@ import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.stream.Collectors;
+
+
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -36,6 +40,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private EmailService emailService;
+
+    private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
 
     @Override
     public Order placeOrder(User user, OrderDTO orderDTO) {
@@ -267,5 +273,36 @@ public class OrderServiceImpl implements OrderService {
         cartRepository.save(cart);
 
         return null; // Trả về null hoặc có thể trả về một thông báo nào đó tùy vào yêu cầu của bạn
+    }
+
+    @Override
+    public List<OrderrDTO> getAllOrders() {
+        logger.info("Fetching all products");
+        List<Order> orders = orderRepository.findAll();
+        return orders.stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public OrderrDTO toDTO(Order order) {
+
+        return new OrderrDTO(
+                order.getOrderId(),
+                order.getUser().getFullName(),
+                order.getUser().getPhoneNumber(),
+                order.getOrderDate(),
+                order.getTotalAmount(),
+                order.getDeliveryAddress(),
+                order.getStatus(),
+                order.getPaymentStatus()
+        );
+    }
+    @Override
+    public void updateOrderStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        order.setStatus(Order.OrderStatus.valueOf(status));
+        orderRepository.save(order);
     }
 }
