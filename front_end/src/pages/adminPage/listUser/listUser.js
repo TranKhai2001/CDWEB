@@ -25,19 +25,24 @@ const ListUser = () => {
         fetchUsers();
     }, []);
 
-    const deleteUser = async (id) => {
+    const toggleUserStatus = async (id) => {
         try {
-            const response = await fetch(`http://localhost:8080/users/${id}`, {
+            const response = await fetch(`http://localhost:8080/users/${id}/toggle-status`, {
                 method: 'PUT',
             });
 
             if (response.ok) {
-                setUsers(users.map(user => user.userId === id ? { ...user, status: 'INACTIVE' } : user));
+                setUsers(users.map(user =>
+                    user.userId === id
+                        ? { ...user, status: user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE' }
+                        : user
+                ));
             } else {
-                console.error('Failed to delete user');
+                const errorText = await response.text();
+                console.error(`Failed to toggle user status: ${errorText}`);
             }
         } catch (error) {
-            console.error('Error deleting user:', error);
+            console.error('Error toggling user status:', error);
         }
     };
 
@@ -48,7 +53,7 @@ const ListUser = () => {
             </div>
             <table style={{ width: "100%" }} className="list-user">
                 <tr>
-                    <th>Xóa</th>
+                    <th>TT</th>
                     <th>STT</th>
                     <th>Tên người dùng</th>
                     <th>Ngày sinh</th>
@@ -61,7 +66,7 @@ const ListUser = () => {
                 </tr>
                 {users.map((user, index) => (
                     <tr key={user.userId}>
-                        <td onClick={() => deleteUser(user.userId)}>-</td>
+                        <td onClick={() => toggleUserStatus(user.userId)}>-</td>
                         <td>{index + 1}</td>
                         <td>{user.username}</td>
                         <td>{user.dateOfBirth}</td>

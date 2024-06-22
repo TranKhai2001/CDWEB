@@ -78,12 +78,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void deleteUserById(Long id) {
+    public void toggleUserStatusById(Long id) {
         Optional<User> userOptional = getUserById(id);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            user.setStatus(UserStatus.INACTIVE);
+            if (user.getStatus() == UserStatus.ACTIVE) {
+                user.setStatus(UserStatus.INACTIVE);
+            } else {
+                user.setStatus(UserStatus.ACTIVE);
+            }
             userRepository.save(user);
+
     }
     }
     @Override

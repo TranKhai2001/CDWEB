@@ -1,9 +1,6 @@
 package com.example.bankend.controller;
 
-import com.example.bankend.dto.OrderDTO;
-import com.example.bankend.dto.OrderDetailDTO;
-import com.example.bankend.dto.OrderHistoryDTO;
-import com.example.bankend.dto.OrderrDTO;
+import com.example.bankend.dto.*;
 import com.example.bankend.entity.Order;
 import com.example.bankend.entity.User;
 import com.example.bankend.service.OrderService;
@@ -71,6 +68,22 @@ public class OrderController {
             }
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
+    @GetMapping("/orders")
+    public ResponseEntity<List<OrderrDTO>> getAllProducts() {
+
+        List<OrderrDTO> orders = orderService.getAllOrders();
+        return ResponseEntity.ok(orders);
+    }
+
+    @PutMapping("/update-status/{orderId}")
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatusUpdateDTO statusUpdateDTO) {
+        try {
+            orderService.updateOrderStatus(orderId, statusUpdateDTO.getStatus());
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 }

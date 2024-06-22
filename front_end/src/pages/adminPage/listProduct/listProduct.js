@@ -125,7 +125,10 @@ const ListProduct = () =>{
                 </div>
                 <div>
                     <label>Loại:</label>
-                    <input type="text" id="categoryName" />
+                    <select id="categoryName">
+                        <option value="rau củ">rau củ</option>
+                        <option value="INACTIVE">trái cây</option>
+                    </select>
                 </div>
                 <div>
                     <label>Link ảnh:</label>

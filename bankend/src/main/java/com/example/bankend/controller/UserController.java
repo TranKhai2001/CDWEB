@@ -85,10 +85,14 @@ public class UserController {
         Optional<User> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
-    @PutMapping("/users/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        userService.deleteUserById(id);
-        return ResponseEntity.noContent().build();
+    @PutMapping("/users/{id}/toggle-status")
+    public ResponseEntity<String> toggleUserStatus(@PathVariable Long id) {
+        try {
+            userService.toggleUserStatusById(id);
+            return ResponseEntity.noContent().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error toggling user status");
+        }
     }
 
     @GetMapping("/profile")
