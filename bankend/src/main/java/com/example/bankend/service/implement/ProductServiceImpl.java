@@ -8,10 +8,10 @@ import com.example.bankend.entity.ProductStatus;
 import com.example.bankend.repository.CategoryRepository;
 import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.service.ProductService;
+import com.example.bankend.service.ProductAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -24,7 +24,7 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
-    private CategoryRepository categoryRepository;
+    private final CategoryRepository categoryRepository;
 
     @Autowired
     public ProductServiceImpl(ProductRepository productRepository, CategoryRepository categoryRepository) {
@@ -63,19 +63,6 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteProduct(Long productId) {
-        Optional<Product> optionalProduct = productRepository.findById(productId);
-        if (optionalProduct.isPresent()) {
-            Product product = optionalProduct.get();
-            product.setStatus(ProductStatus.INACTIVE);
-            productRepository.save(product);
-        } else {
-            logger.warn("Product with ID: {} not found", productId);
-            throw new RuntimeException("Product not found");
-        }
-    }
-
-    @Override
     public int getProductQuantityAvailable(Long productId) {
         Optional<Product> product = productRepository.findById(productId);
         return product.map(Product::getQuantityAvailable).orElse(0);
@@ -83,6 +70,10 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public void addProduct(ProductDTO productDTO) {
+        if (productRepository.findByName(productDTO.getName()).isPresent()) {
+            throw new ProductAlreadyExistsException("Product with name " + productDTO.getName() + " already exists");
+        }
+
         try {
             Product product = new Product();
 
@@ -92,7 +83,12 @@ public class ProductServiceImpl implements ProductService {
             product.setPrice(productDTO.getPrice());
             product.setQuantityAvailable(productDTO.getQuantityAvailable());
             product.setSold(0); // Assuming new product starts with 0 sold
-            product.setCategory(categoryRepository.findByName(productDTO.getCategoryName()));
+            Category category = categoryRepository.findByName(productDTO.getCategoryName());
+            if (category != null) {
+                product.setCategory(category);
+            } else {
+                throw new RuntimeException("Category not found");
+            }
             product.setImageUrl(productDTO.getImageUrl());
             product.setWeight(productDTO.getWeight());
             product.setUnit(productDTO.getUnit());
@@ -104,10 +100,37 @@ public class ProductServiceImpl implements ProductService {
         } catch (Exception e) {
             logger.error("Error adding product", e);
             throw new RuntimeException("Error adding product: " + e.getMessage());
-            // Hoặc có thể sử dụng các mã lỗi HTTP như HttpStatus.INTERNAL_SERVER_ERROR
         }
     }
 
+    @Override
+    public void updateProduct(Long productId, ProductDTO productDTO) {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isPresent()) {
+            Product product = optionalProduct.get();
+            product.setName(productDTO.getName());
+            product.setDescription(productDTO.getDescription());
+            product.setPrice(productDTO.getPrice());
+            product.setQuantityAvailable(productDTO.getQuantityAvailable());
+            product.setImageUrl(productDTO.getImageUrl());
+            product.setWeight(productDTO.getWeight());
+            product.setUnit(productDTO.getUnit());
+            product.setStatus(productDTO.getStatus());
+            productRepository.save(product);
+        } else {
+            throw new RuntimeException("Product not found");
+        }
+    }
+
+    @Override
+    public void deleteProduct(Long productId) {
+        Optional<Product> optionalProduct = productRepository.findById(productId);
+        if (optionalProduct.isPresent()) {
+            productRepository.delete(optionalProduct.get());
+        } else {
+            throw new RuntimeException("Product not found");
+        }
+    }
 
     private ProductDTO convertToDto(Product product) {
         return new ProductDTO(
@@ -125,5 +148,4 @@ public class ProductServiceImpl implements ProductService {
                 product.getStatus()
         );
     }
-
 }

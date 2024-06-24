@@ -62,7 +62,7 @@
       transition: border-color 0.3s ease;
 
       &:focus {
-        border-color: #007bff;
+        border-color: #008874;
         outline: none;
       }
     }
@@ -70,7 +70,7 @@
 
   button {
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #008874;
     color: #fff;
     border: none;
     border-radius: 4px;
@@ -79,7 +79,22 @@
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #0056b3;
+      background-color: #008874;
     }
+  }
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #008874;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #008874;
   }
 }

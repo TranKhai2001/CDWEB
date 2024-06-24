@@ -77,21 +77,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public void toggleUserStatusById(Long id) {
-        Optional<User> userOptional = getUserById(id);
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            if (user.getStatus() == UserStatus.ACTIVE) {
-                user.setStatus(UserStatus.INACTIVE);
-            } else {
-                user.setStatus(UserStatus.ACTIVE);
-            }
-            userRepository.save(user);
-
-    }
-    }
-    @Override
     public Optional<User> getUserById(Long id) {
         return userRepository.findById(id);
     }
@@ -145,6 +130,20 @@ public class UserServiceImpl implements UserService {
                 userRepository.save(user);
                 return true;
             }
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean adminUpdateUser(Long userId, AdminUpdateDto adminUpdateDto) {
+        Optional<User> userOptional = userRepository.findById(userId);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setStatus(UserStatus.valueOf(adminUpdateDto.getStatus()));
+            user.setRole(UserRole.valueOf(adminUpdateDto.getRole()));
+            userRepository.save(user);
+            return true;
         }
         return false;
     }

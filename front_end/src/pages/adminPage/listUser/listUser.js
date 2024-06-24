@@ -1,10 +1,12 @@
 import React, { memo, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import 'react-tabs/style/react-tabs.css';
 import "./style.scss";
 
 const ListUser = () => {
     const [users, setUsers] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1);
+    const usersPerPage = 10;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,7 +19,7 @@ const ListUser = () => {
                     const data = await response.json();
                     setUsers(data);
                 } else if (response.status === 401) {
-                    navigate('/'); // Điều hướng tới trang đăng nhập nếu không có quyền
+                    navigate('/'); // Redirect to login page if unauthorized
                 } else {
                     console.error('Failed to fetch users');
                 }
@@ -29,69 +31,71 @@ const ListUser = () => {
         fetchUsers();
     }, [navigate]);
 
-    const toggleUserStatus = async (id) => {
-        try {
-            const response = await fetch(`http://localhost:8080/users/${id}/toggle-status`, {
-                method: 'PUT',
-                credentials: 'include'
-            });
-
-            if (response.ok) {
-                setUsers(users.map(user =>
-                    user.userId === id
-                        ? { ...user, status: user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE' }
-                        : user
-                ));
-            } else if (response.status === 401) {
-                navigate('/'); // Điều hướng tới trang đăng nhập nếu không có quyền
-            } else {
-                const errorText = await response.text();
-                console.error(`Failed to toggle user status: ${errorText}`);
-            }
-        } catch (error) {
-            console.error('Error toggling user status:', error);
-        }
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
     };
+
+    const handleDetailClick = (userId) => {
+        navigate(`/chi-tiet-nguoi-dung/${userId}`);
+    };
+
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
+
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(users.length / usersPerPage); i++) {
+        pageNumbers.push(i);
+    }
 
     return (
         <div className="container">
             <div className="section-title">
                 <h2>Danh sách người dùng</h2>
             </div>
-            <table style={{ width: "100%" }} className="list-user">
+            <table className="list-user">
                 <thead>
                 <tr>
-                    <th>TT</th>
-                    <th>STT</th>
+                    <th>ID</th>
+                    <th>Tên tài khoản</th>
                     <th>Tên người dùng</th>
-                    <th>Ngày sinh</th>
-                    <th>Giới tính</th>
+                    <th>Ngày đăng ký</th>
                     <th>Email</th>
-                    <th>Họ tên</th>
-                    <th>SĐT</th>
                     <th>Trạng thái</th>
+                    <th>Role</th>
                     <th>Chi tiết</th>
                 </tr>
                 </thead>
                 <tbody>
-                {users.map((user, index) => (
+                {currentUsers.map(user => (
                     <tr key={user.userId}>
-                        <td onClick={() => toggleUserStatus(user.userId)}>-</td>
-                        <td>{index + 1}</td>
+                        <td>{user.userId}</td>
                         <td>{user.username}</td>
-                        <td>{user.dateOfBirth}</td>
-                        <td>{user.gender}</td>
-                        <td>{user.email}</td>
                         <td>{user.fullName}</td>
-                        <td>{user.phoneNumber}</td>
+                        <td>{new Date(user.registrationDate).toLocaleDateString()}</td>
+                        <td>{user.email}</td>
                         <td>{user.status}</td>
+                        <td>{user.role}</td>
                         <td>
-                            <Link to={`/chi-tiet-nguoi-dung/${user.userId}`}>Click</Link>
+                            <button className="action-button" onClick={() => handleDetailClick(user.userId)}>
+                                Chi tiết
+                            </button>
                         </td>
                     </tr>
                 ))}
                 </tbody>
             </table>
+            <div className="pagination">
+                {pageNumbers.map(number => (
+                    <button
+                        key={number}
+                        onClick={() => handlePageChange(number)}
+                        className={`page-number ${currentPage === number ? 'active' : ''}`}
+                    >
+                        {number}
+                    </button>
+                ))}
+            </div>
         </div>
     );
 };

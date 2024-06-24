@@ -8,7 +8,9 @@ public interface ProductService {
     List<ProductDTO> getAllProducts();
     ProductDTO getProductById(Long productId);
     List<ProductDTO> getActiveProducts();
-    void deleteProduct(Long productId); // New method to delete a product
     int getProductQuantityAvailable(Long productId);
-    void addProduct(ProductDTO productDTO);
+    void addProduct(ProductDTO productDTO) throws ProductAlreadyExistsException;
+    void updateProduct(Long productId, ProductDTO productDTO);
+
+    void deleteProduct(Long productId);
 }

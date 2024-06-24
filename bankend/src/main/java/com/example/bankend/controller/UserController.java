@@ -96,20 +96,22 @@ public class UserController {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
-    @PutMapping("/users/{id}/toggle-status")
-    public ResponseEntity<String> toggleUserStatus(@PathVariable Long id, HttpSession session) {
+
+    @PutMapping("/users/{id}/admin-update")
+    public ResponseEntity<String> adminUpdateUser(@PathVariable Long id, @RequestBody AdminUpdateDto adminUpdateDto, HttpSession session) {
         User currentUser = (User) session.getAttribute("user");
         if (currentUser != null && currentUser.getRole() == UserRole.ADMIN) {
-            try {
-                userService.toggleUserStatusById(id);
-                return ResponseEntity.noContent().build();
-            } catch (Exception e) {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error toggling user status");
+            boolean isUpdated = userService.adminUpdateUser(id, adminUpdateDto);
+            if (isUpdated) {
+                return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>("Failed to update user", HttpStatus.BAD_REQUEST);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
+
 
     @GetMapping("/profile")
     public ResponseEntity<UserProfileDto> getProfile(HttpSession session) {
