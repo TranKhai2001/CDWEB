@@ -1,3 +1,5 @@
+import ProductDetailAdmin from "../pages/adminPage/productDetailAdmin/productDetailAdmin";
+
 export const ROUTERS = {
     USER : {
         HOME : "",
@@ -16,6 +18,7 @@ export const ROUTERS = {
         LISTUSER : "danh-sach-nguoi-dung",
         LISTPRODUCT: "danh-sach-san-pham",
         LISTODER: "danh-sach-don-hang",
-        USERDETAILS : "chi-tiet-nguoi-dung/:userId"
+        USERDETAILS : "chi-tiet-nguoi-dung/:userId",
+        PRODUCTDETAILADMIN:"chi-tiet-san-pham-admin/:productId"
     }
 }

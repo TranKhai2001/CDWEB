@@ -1,17 +1,30 @@
-import React, {memo, useEffect, useState} from "react";
+import React, { memo, useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import "./style.scss";
-import {Link, useNavigate} from "react-router-dom";
+import { AiFillDelete } from "react-icons/ai";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const ListProduct = () =>{
+const ListProduct = () => {
     const [products, setProducts] = useState([]);
-    const navigate = useNavigate();
     const [categories, setCategories] = useState([]);
+    const [message, setMessage] = useState("");
+    const [productData, setProductData] = useState({
+        name: "",
+        description: "",
+        price: "",
+        quantityAvailable: "",
+        categoryName: "",
+        imageUrl: "",
+        weight: "",
+        unit: "",
+        status: "ACTIVE"
+    });
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Fetch products from the backend API
-        axios.get('http://localhost:8080/api/products')
+        axios.get('http://localhost:8080/api/products/admin')
             .then(response => {
                 setProducts(response.data);
             })
@@ -28,36 +41,28 @@ const ListProduct = () =>{
                 console.error("There was an error fetching the categories!", error);
             });
     }, []);
-    const handleDelete = (productId) => {
-        axios.put(`http://localhost:8080/api/products/${productId}`)
-            .then(response => {
-                console.log("Product marked as inactive successfully");
-                setProducts(products.filter(product => product.productId !== productId));
-            })
-            .catch(error => {
-                console.error("There was an error marking the product as inactive!", error);
-            });
-    };
+
+
 
     const handleAddProduct = () => {
-        const productData = {
-            name: document.getElementById('name').value,
-            description: document.getElementById('description').value,
-            price: document.getElementById('price').value,
-            quantityAvailable: document.getElementById('quantityAvailable').value,
-            categoryName: document.getElementById('categoryName').value,
-            imageUrl: document.getElementById('imageUrl').value,
-            weight: document.getElementById('weight').value,
-            unit: document.getElementById('unit').value,
-            status: document.getElementById('status').value
-        };
-
         axios.post('http://localhost:8080/api/products/add', productData)
             .then(response => {
                 console.log("Product added successfully");
-                // Optionally, navigate to a different page or refresh product list
-                // For simplicity, we can reload the entire product list
-                axios.get('http://localhost:8080/api/products')
+                setMessage("Product added successfully!");
+                // Reset form data
+                setProductData({
+                    name: "",
+                    description: "",
+                    price: "",
+                    quantityAvailable: "",
+                    categoryName: "",
+                    imageUrl: "",
+                    weight: "",
+                    unit: "",
+                    status: "ACTIVE"
+                });
+                // Reload the product list
+                axios.get('http://localhost:8080/api/products/admin')
                     .then(response => {
                         setProducts(response.data);
                     })
@@ -66,17 +71,54 @@ const ListProduct = () =>{
                     });
             })
             .catch(error => {
+                if (error.response && error.response.status === 409) {
+                    setMessage("Product already exists!");
+                } else {
+                    setMessage("Error adding product!");
+                }
                 console.error("Error adding product!", error);
             });
     };
 
+    const handleDeleteProduct = (productId) => {
+        axios.delete(`http://localhost:8080/api/products/delete/${productId}`)
+            .then(response => {
+                console.log("Product deleted successfully");
+                setMessage("Product deleted successfully!");
+                // Reload the product list
+                axios.get('http://localhost:8080/api/products/admin')
+                    .then(response => {
+                        setProducts(response.data);
+                    })
+                    .catch(error => {
+                        console.error("Error refreshing product list after deletion!", error);
+                    });
+            })
+            .catch(error => {
+                setMessage("Error deleting product!");
+                console.error("Error deleting product!", error);
+            });
+    };
+
+    const handleDetailClick = (productId) => {
+        navigate(`/chi-tiet-san-pham-admin/${productId}`);
+    };
+    const handleInputChange = (e) => {
+        const { id, value } = e.target;
+        setProductData(prevState => ({
+            ...prevState,
+            [id]: value
+        }));
+    };
 
     return (
         <div className="container">
             <div className="section-title">
                 <h2>Danh sách sản phẩm</h2>
             </div>
+            {message && <div className="message">{message}</div>}
             <table style={{width:"100%"}} className="list-product">
+                <thead>
                 <tr>
                     <th>Xóa</th>
                     <th>STT</th>
@@ -86,11 +128,13 @@ const ListProduct = () =>{
                     <th>Số lượng</th>
                     <th>Loại</th>
                     <th>Trạng thái</th>
-                    <th>Chi tết</th>
+                    <th>Chi tiết</th>
                 </tr>
-                { products.map((item, index) => (
+                </thead>
+                <tbody>
+                {products.map((item, index) => (
                     <tr key={item.productId}>
-                        <td onClick={() => handleDelete(item.productId)}>-</td>
+                        <td><AiFillDelete onClick={() => handleDeleteProduct(item.productId)} /></td>
                         <td>{item.productId}</td>
                         <td>{item.name}</td>
                         <td>{item.description}</td>
@@ -98,10 +142,14 @@ const ListProduct = () =>{
                         <td>{item.quantityAvailable}</td>
                         <td>{item.categoryName}</td>
                         <td>{item.status}</td>
-                        <td><Link to={`/chi-tiet-san-pham/${item.productId}`}>Click</Link></td>
+                        <td>
+                            <button onClick={() => handleDetailClick(item.productId)}>
+                                Chi tiết
+                            </button>
+                        </td>
                     </tr>
                 ))}
-
+                </tbody>
             </table>
             <div className="add-product">
                 <div className="section-title">
@@ -109,52 +157,54 @@ const ListProduct = () =>{
                 </div>
                 <div>
                     <label>Tên sản phẩm:</label>
-                    <input type="text" id="name"/>
+                    <input type="text" id="name" value={productData.name} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Mô tả:</label>
-                    <input type="text" id="description"/>
+                    <input type="text" id="description" value={productData.description} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Giá:</label>
-                    <input type="text" id="price"/>
+                    <input type="text" id="price" value={productData.price} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Số lượng:</label>
-                    <input type="text"  id="quantityAvailable" />
+                    <input type="text" id="quantityAvailable" value={productData.quantityAvailable} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Loại:</label>
-                    <select id="categoryName">
-                        <option value="rau củ">rau củ</option>
-                        <option value="INACTIVE">trái cây</option>
+                    <select id="categoryName" value={productData.categoryName} onChange={handleInputChange}>
+                        {categories.map(category => (
+                            <option key={category.categoryId} value={category.name}>{category.name}</option>
+                        ))}
                     </select>
                 </div>
                 <div>
                     <label>Link ảnh:</label>
-                    <input type="text" id="imageUrl"/>
+                    <input type="text" id="imageUrl" value={productData.imageUrl} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Trọng lượng:</label>
-                    <input type="text" id="weight"/>
+                    <input type="text" id="weight" value={productData.weight} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Đơn vị:</label>
-                    <input type="text" id="unit" />
+                    <input type="text" id="unit" value={productData.unit} onChange={handleInputChange} />
                 </div>
                 <div>
                     <label>Trạng thái:</label>
-                    <select id="status">
+                    <select id="status" value={productData.status} onChange={handleInputChange}>
                         <option value="ACTIVE">Active</option>
                         <option value="INACTIVE">Inactive</option>
                     </select>
                 </div>
                 <div>
-                    <button onClick={handleAddProduct} >Thêm sản phẩm</button>
+                    {message && <div className="message">{message}</div>}
+                    <button onClick={handleAddProduct}>Thêm sản phẩm</button>
                 </div>
             </div>
         </div>
     );
-
 };
+
 export default memo(ListProduct);
