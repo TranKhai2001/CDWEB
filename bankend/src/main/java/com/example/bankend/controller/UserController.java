@@ -2,6 +2,7 @@ package com.example.bankend.controller;
 
 import com.example.bankend.dto.*;
 import com.example.bankend.entity.User;
+import com.example.bankend.entity.UserRole;
 import com.example.bankend.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,23 +76,38 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(users);
+    public ResponseEntity<List<User>> getAllUsers(HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser != null && currentUser.getRole() == UserRole.ADMIN) {
+            List<User> users = userService.getAllUsers();
+            return ResponseEntity.ok(users);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
     // Thêm phương thức này
     @GetMapping("/users/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    public ResponseEntity<User> getUserById(@PathVariable Long id, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser != null && currentUser.getRole() == UserRole.ADMIN) {
+            Optional<User> user = userService.getUserById(id);
+            return user.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
     @PutMapping("/users/{id}/toggle-status")
-    public ResponseEntity<String> toggleUserStatus(@PathVariable Long id) {
-        try {
-            userService.toggleUserStatusById(id);
-            return ResponseEntity.noContent().build();
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error toggling user status");
+    public ResponseEntity<String> toggleUserStatus(@PathVariable Long id, HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser != null && currentUser.getRole() == UserRole.ADMIN) {
+            try {
+                userService.toggleUserStatusById(id);
+                return ResponseEntity.noContent().build();
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error toggling user status");
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 

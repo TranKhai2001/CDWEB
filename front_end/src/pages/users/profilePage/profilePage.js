@@ -1,4 +1,5 @@
 import React, { useState, useEffect, memo } from "react";
+import { useNavigate } from "react-router-dom";
 import "./style.scss";
 
 const ProfilePage = () => {
@@ -9,38 +10,67 @@ const ProfilePage = () => {
         gender: "",
         dateOfBirth: ""
     });
-
     const [isEditing, setIsEditing] = useState(false);
     const [errors, setErrors] = useState({});
+    const [currentUser, setCurrentUser] = useState(null);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetch("http://localhost:8080/profile", {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include"
-        })
-            .then(response => {
-                if (response.status === 200) {
-                    return response.json();
-                } else {
-                    throw new Error("Unauthorized");
-                }
-            })
-            .then(data => {
-                setProfile({
-                    email: data.email,
-                    fullName: data.fullName,
-                    phoneNumber: data.phoneNumber,
-                    gender: data.gender,
-                    dateOfBirth: data.dateOfBirth.split("T")[0]
+        const fetchCurrentUser = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/check-login', {
+                    credentials: 'include'
                 });
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUser(data);
+                } else {
+                    console.error('Failed to fetch current user');
+                    setError('Bạn không có quyền truy cập');
+                    navigate('/dang-nhap');
+                }
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+                navigate('/dang-nhap');
+            }
+        };
+
+        fetchCurrentUser();
+    }, [navigate]);
+
+    useEffect(() => {
+        if (currentUser) {
+            fetch("http://localhost:8080/profile", {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include"
             })
-            .catch(error => {
-                console.error("Error fetching profile:", error);
-            });
-    }, []);
+                .then(response => {
+                    if (response.status === 200) {
+                        return response.json();
+                    } else if (response.status === 401) {
+                        setError('Unauthorized');
+                        navigate('/dang-nhap');
+                        throw new Error("Unauthorized");
+                    }
+                })
+                .then(data => {
+                    setProfile({
+                        email: data.email,
+                        fullName: data.fullName,
+                        phoneNumber: data.phoneNumber,
+                        gender: data.gender,
+                        dateOfBirth: data.dateOfBirth.split("T")[0]
+                    });
+                })
+                .catch(error => {
+                    console.error("Error fetching profile:", error);
+                });
+        }
+    }, [currentUser, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -68,7 +98,7 @@ const ProfilePage = () => {
                         }
                     });
                 } else {
-                    throw new Error("Số điện thoại đã được sử dụng");
+                    throw new Error("Phone number already exists");
                 }
             })
             .then(updatedProfile => {
@@ -105,7 +135,9 @@ const ProfilePage = () => {
             .then(response => {
                 if (response.status === 200) {
                     return response.json();
-                } else {
+                } else if (response.status === 401) {
+                    setError('Unauthorized');
+                    navigate('/dang-nhap');
                     throw new Error("Unauthorized");
                 }
             })

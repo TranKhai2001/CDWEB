@@ -1,19 +1,23 @@
-// ListUser.js
 import React, { memo, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import 'react-tabs/style/react-tabs.css';
 import "./style.scss";
 
 const ListUser = () => {
     const [users, setUsers] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await fetch('http://localhost:8080/users');
+                const response = await fetch('http://localhost:8080/users', {
+                    credentials: 'include'
+                });
                 if (response.ok) {
                     const data = await response.json();
                     setUsers(data);
+                } else if (response.status === 401) {
+                    navigate('/'); // Điều hướng tới trang đăng nhập nếu không có quyền
                 } else {
                     console.error('Failed to fetch users');
                 }
@@ -23,12 +27,13 @@ const ListUser = () => {
         };
 
         fetchUsers();
-    }, []);
+    }, [navigate]);
 
     const toggleUserStatus = async (id) => {
         try {
             const response = await fetch(`http://localhost:8080/users/${id}/toggle-status`, {
                 method: 'PUT',
+                credentials: 'include'
             });
 
             if (response.ok) {
@@ -37,6 +42,8 @@ const ListUser = () => {
                         ? { ...user, status: user.status === 'ACTIVE' ? 'INACTIVE' : 'ACTIVE' }
                         : user
                 ));
+            } else if (response.status === 401) {
+                navigate('/'); // Điều hướng tới trang đăng nhập nếu không có quyền
             } else {
                 const errorText = await response.text();
                 console.error(`Failed to toggle user status: ${errorText}`);
@@ -52,6 +59,7 @@ const ListUser = () => {
                 <h2>Danh sách người dùng</h2>
             </div>
             <table style={{ width: "100%" }} className="list-user">
+                <thead>
                 <tr>
                     <th>TT</th>
                     <th>STT</th>
@@ -64,6 +72,8 @@ const ListUser = () => {
                     <th>Trạng thái</th>
                     <th>Chi tiết</th>
                 </tr>
+                </thead>
+                <tbody>
                 {users.map((user, index) => (
                     <tr key={user.userId}>
                         <td onClick={() => toggleUserStatus(user.userId)}>-</td>
@@ -80,6 +90,7 @@ const ListUser = () => {
                         </td>
                     </tr>
                 ))}
+                </tbody>
             </table>
         </div>
     );
