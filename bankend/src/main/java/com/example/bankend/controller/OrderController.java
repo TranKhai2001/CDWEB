@@ -3,6 +3,7 @@ package com.example.bankend.controller;
 import com.example.bankend.dto.*;
 import com.example.bankend.entity.Order;
 import com.example.bankend.entity.User;
+import com.example.bankend.entity.UserRole;
 import com.example.bankend.service.OrderService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,19 +72,39 @@ public class OrderController {
         }
     }
     @GetMapping("/orders")
-    public ResponseEntity<List<OrderrDTO>> getAllProducts() {
+    public ResponseEntity<List<OrderrDTO>> getAllOrders(HttpSession session) {
+        User currentUser = (User) session.getAttribute("user");
+        if (currentUser != null && currentUser.getRole() == UserRole.ADMIN) {
+            List<OrderrDTO> orders = orderService.getAllOrders();
+            return ResponseEntity.ok(orders);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+    }
 
-        List<OrderrDTO> orders = orderService.getAllOrders();
-        return ResponseEntity.ok(orders);
+    @GetMapping("/admin/detail/{orderId}")
+    public ResponseEntity<OrderDetailDTO> getOrderDetailForAdmin(@PathVariable Long orderId, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null && user.getRole() == UserRole.ADMIN) {
+            OrderDetailDTO orderDetail = orderService.getOrderDetailForAdmin(orderId);
+            return new ResponseEntity<>(orderDetail, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
     }
 
     @PutMapping("/update-status/{orderId}")
-    public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatusUpdateDTO statusUpdateDTO) {
-        try {
-            orderService.updateOrderStatus(orderId, statusUpdateDTO.getStatus());
-            return new ResponseEntity<>(HttpStatus.OK);
-        } catch (IllegalArgumentException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<?> updateOrderStatus(@PathVariable Long orderId, @RequestBody OrderStatusUpdateDTO statusUpdateDTO, HttpSession session) {
+        User user = (User) session.getAttribute("user");
+        if (user != null) {
+            try {
+                orderService.updateOrderStatus(orderId, statusUpdateDTO.getStatus());
+                return new ResponseEntity<>(HttpStatus.OK);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 }

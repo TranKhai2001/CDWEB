@@ -21,7 +21,6 @@ const Pay = () => {
     const navigate = useNavigate();
     const shippingMoney = 10000;
 
-
     useEffect(() => {
         const fetchCartDetails = async () => {
             try {
@@ -76,14 +75,15 @@ const Pay = () => {
             return;
         }
 
-
-        if (!userInfo.fullName || !userInfo.phone || !city || !district || !ward ) {
+        if (!userInfo.fullName || !userInfo.phone || !city || !district || !ward) {
             alert("Bạn hãy điền đủ thông tin");
             return;
         }
 
+        const fullDeliveryAddress = `Tên: ${userInfo.fullName}, SDT: ${userInfo.phone}, Địa chỉ: ${city}, ${district}, ${ward}, ${deliveryAddress}`;
+
         const orderDto = {
-            deliveryAddress: `${city}, ${district}, ${ward}, ${deliveryAddress}`,
+            deliveryAddress: fullDeliveryAddress,
             paymentMethod: 'CASH_ON_DELIVERY',
             items: cartItems.map(item => ({
                 productId: item.productId,
@@ -103,7 +103,7 @@ const Pay = () => {
                 state: {
                     orderId: response.data.orderId,
                     orderDate: response.data.orderDate,
-                    deliveryAddress: `${city}, ${district}, ${ward}, ${deliveryAddress}`,
+                    deliveryAddress: fullDeliveryAddress,
                     cartItems: cartItems,
                     total: total,
                     shippingMoney: shippingMoney
@@ -179,7 +179,7 @@ const Pay = () => {
                         <div className="Total-Money">
                             <div className="Money">
                                 <p>Tổng tiền:</p>
-                                <p className="Price">{formatter(total+shippingMoney)}</p>
+                                <p className="Price">{formatter(total + shippingMoney)}</p>
                             </div>
                         </div>
                         <div className="Button" onClick={handleOrderSubmit}>

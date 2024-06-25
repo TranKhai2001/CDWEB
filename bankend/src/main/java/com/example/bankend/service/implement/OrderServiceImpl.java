@@ -245,6 +245,37 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
         order.setStatus(Order.OrderStatus.valueOf(status));
+        if (status.equals("DELIVERED")) {
+            order.setPaymentStatus(Order.PaymentStatus.PAID);
+        }
+        if (status.equals("CANCELLED")) {
+            order.setPaymentStatus(Order.PaymentStatus.FAILED);
+        }
         orderRepository.save(order);
+    }
+
+    @Override
+    public OrderDetailDTO getOrderDetailForAdmin(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+        List<OrderDetailDTO.OrderItemDetailDTO> items = order.getItems().stream().map(item ->
+                new OrderDetailDTO.OrderItemDetailDTO(
+                        item.getProduct().getProductId(),
+                        item.getProduct().getName(),
+                        item.getQuantity(),
+                        item.getPrice(),
+                        item.getProduct().getImageUrl())
+        ).collect(Collectors.toList());
+
+        return new OrderDetailDTO(
+                order.getOrderId(),
+                order.getOrderDate(),
+                order.getTotalAmount(),
+                order.getDeliveryAddress(),
+                order.getStatus(),
+                order.getPaymentStatus(),
+                items
+        );
     }
 }

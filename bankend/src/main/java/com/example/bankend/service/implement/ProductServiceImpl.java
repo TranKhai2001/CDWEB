@@ -66,7 +66,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductDTO getProductById(Long productId) {
         logger.info("Fetching active product with ID: {}", productId);
-        Optional<Product> optionalProduct = productRepository.findByIdAndStatus(productId, ProductStatus.ACTIVE);
+        Optional<Product> optionalProduct = productRepository.findByIdAndProductStatusAndCategoryStatus(productId, ProductStatus.ACTIVE, CategoryStatus.ACTIVE);
         if (optionalProduct.isPresent()) {
             return convertToDto(optionalProduct.get());
         } else {

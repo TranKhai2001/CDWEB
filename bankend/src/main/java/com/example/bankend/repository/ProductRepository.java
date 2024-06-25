@@ -19,6 +19,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
     Optional<Product> findByName(String name);
 
-    @Query("SELECT p FROM Product p WHERE p.productId = :productId AND p.status = :status")
-    Optional<Product> findByIdAndStatus(@Param("productId") Long productId, @Param("status") ProductStatus status);
+    @Query("SELECT p FROM Product p WHERE p.productId = :productId AND p.status = :productStatus AND p.category.status = :categoryStatus")
+    Optional<Product> findByIdAndProductStatusAndCategoryStatus(@Param("productId") Long productId, @Param("productStatus") ProductStatus productStatus, @Param("categoryStatus") CategoryStatus categoryStatus);
 }
