@@ -38,7 +38,7 @@ const Register = () => {
                 fullName: fullname,
                 phoneNumber: phone,
                 gender,
-                dateOfBirth: new Date(dob).toISOString(), // Chuyển đổi sang định dạng ISO
+                dateOfBirth: new Date(dob).toISOString(),// Chuyển đổi sang định dạng ISO
                 username,
                 password
             });

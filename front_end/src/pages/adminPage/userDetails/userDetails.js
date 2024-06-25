@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {memo, useEffect, useState} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import "./style.scss";
 
@@ -210,4 +210,4 @@ const UserDetails = () => {
     );
 };
 
-export default UserDetails;
+export default memo(UserDetails);

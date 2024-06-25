@@ -91,14 +91,18 @@ const ProfilePage = () => {
                     return response.json();
                 } else if (response.status === 400) {
                     return response.json().then(data => {
-                        if (data.phoneNumber) {
-                            throw new Error(data.phoneNumber);
+                        if (data.error) {
+                            throw new Error(data.error);
                         } else {
                             throw new Error("Failed to update profile");
                         }
                     });
+                } else if (response.status === 401) {
+                    setError('Unauthorized');
+                    navigate('/dang-nhap');
+                    throw new Error("Unauthorized");
                 } else {
-                    throw new Error("Phone number already exists");
+                    throw new Error("Unknown error occurred");
                 }
             })
             .then(updatedProfile => {
@@ -115,11 +119,7 @@ const ProfilePage = () => {
             })
             .catch(error => {
                 console.error("Error updating profile:", error);
-                if (error.message.includes("already used")) {
-                    setErrors({ phoneNumber: error.message });
-                } else {
-                    setErrors({ general: error.message });
-                }
+                setErrors({ general: error.message });
             });
     };
 

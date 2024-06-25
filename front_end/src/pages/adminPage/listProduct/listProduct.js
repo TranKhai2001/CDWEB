@@ -8,6 +8,8 @@ import axios from "axios";
 const ListProduct = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [error, setError] = useState('');
     const [message, setMessage] = useState("");
     const [productData, setProductData] = useState({
         name: "",
@@ -23,13 +25,45 @@ const ListProduct = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        const fetchCurrentUser = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/check-login', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUser(data);
+                } else {
+                    console.error('Failed to fetch current user');
+                    setError('Bạn không có quyền truy cập');
+                    navigate('/dang-nhap');
+                }
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+                navigate('/dang-nhap');
+            }
+        };
+
+        fetchCurrentUser();
+    }, [navigate]);
+
+    useEffect(() => {
+        if (currentUser && currentUser.role !== 'ADMIN') {
+            setError('Bạn không có quyền truy cập');
+            return;
+        }
         // Fetch products from the backend API
-        axios.get('http://localhost:8080/api/products/admin')
+        axios.get('http://localhost:8080/api/products/admin', { withCredentials: true })
             .then(response => {
                 setProducts(response.data);
             })
             .catch(error => {
-                console.error("There was an error fetching the products!", error);
+                if (error.response && error.response.status === 401) {
+                    setMessage("Unauthorized access. Please log in as admin.");
+                    navigate('/');
+                } else {
+                    console.error("There was an error fetching the products!", error);
+                }
             });
 
         // Fetch categories from the backend API
@@ -42,10 +76,8 @@ const ListProduct = () => {
             });
     }, []);
 
-
-
     const handleAddProduct = () => {
-        axios.post('http://localhost:8080/api/products/add', productData)
+        axios.post('http://localhost:8080/api/products/add', productData, { withCredentials: true })
             .then(response => {
                 console.log("Product added successfully");
                 setMessage("Product added successfully!");
@@ -62,7 +94,7 @@ const ListProduct = () => {
                     status: "ACTIVE"
                 });
                 // Reload the product list
-                axios.get('http://localhost:8080/api/products/admin')
+                axios.get('http://localhost:8080/api/products/admin', { withCredentials: true })
                     .then(response => {
                         setProducts(response.data);
                     })
@@ -73,6 +105,9 @@ const ListProduct = () => {
             .catch(error => {
                 if (error.response && error.response.status === 409) {
                     setMessage("Product already exists!");
+                } else if (error.response && error.response.status === 401) {
+                    setMessage("Unauthorized access. Please log in as admin.");
+                    navigate('/');
                 } else {
                     setMessage("Error adding product!");
                 }
@@ -81,12 +116,12 @@ const ListProduct = () => {
     };
 
     const handleDeleteProduct = (productId) => {
-        axios.delete(`http://localhost:8080/api/products/delete/${productId}`)
+        axios.delete(`http://localhost:8080/api/products/delete/${productId}`, { withCredentials: true })
             .then(response => {
                 console.log("Product deleted successfully");
                 setMessage("Product deleted successfully!");
                 // Reload the product list
-                axios.get('http://localhost:8080/api/products/admin')
+                axios.get('http://localhost:8080/api/products/admin', { withCredentials: true })
                     .then(response => {
                         setProducts(response.data);
                     })
@@ -95,7 +130,12 @@ const ListProduct = () => {
                     });
             })
             .catch(error => {
-                setMessage("Error deleting product!");
+                if (error.response && error.response.status === 401) {
+                    setMessage("Unauthorized access. Please log in as admin.");
+                    navigate('/');
+                } else {
+                    setMessage("Error deleting product!");
+                }
                 console.error("Error deleting product!", error);
             });
     };
@@ -103,6 +143,7 @@ const ListProduct = () => {
     const handleDetailClick = (productId) => {
         navigate(`/chi-tiet-san-pham-admin/${productId}`);
     };
+
     const handleInputChange = (e) => {
         const { id, value } = e.target;
         setProductData(prevState => ({

@@ -6,6 +6,7 @@ const ProductDetailAdmin = () => {
     const { productId } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
     const [updatedProduct, setUpdatedProduct] = useState({
@@ -19,7 +20,36 @@ const ProductDetailAdmin = () => {
         imageUrl: ""
     });
 
+
     useEffect(() => {
+        const fetchCurrentUser = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/check-login', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUser(data);
+                } else {
+                    console.error('Failed to fetch current user');
+                    setError('Bạn không có quyền truy cập');
+                    navigate('/dang-nhap');
+                }
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+                navigate('/dang-nhap');
+            }
+        };
+
+        fetchCurrentUser();
+    }, [navigate]);
+
+    useEffect(() => {
+
+        if (currentUser && currentUser.role !== 'ADMIN') {
+            setError('Bạn không có quyền truy cập');
+            return;
+        }
         const fetchProduct = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/api/products/admin/${productId}`, {
@@ -42,6 +72,7 @@ const ProductDetailAdmin = () => {
                     setError('Product not found');
                 } else {
                     setError('Failed to fetch product details');
+                    navigate('/');
                 }
             } catch (error) {
                 console.error('Error fetching product details:', error);
@@ -58,6 +89,10 @@ const ProductDetailAdmin = () => {
     };
 
     const handleSave = () => {
+        if (currentUser && currentUser.role !== 'ADMIN') {
+            setError('Bạn không có quyền truy cập');
+            return;
+        }
         fetch(`http://localhost:8080/api/products/update/${productId}`, {
             method: "PUT",
             headers: {
@@ -84,6 +119,10 @@ const ProductDetailAdmin = () => {
 
 // Function to fetch product details
     const fetchProductDetails = async () => {
+        if (currentUser && currentUser.role !== 'ADMIN') {
+            setError('Bạn không có quyền truy cập');
+            return;
+        }
         try {
             const response = await fetch(`http://localhost:8080/api/products/admin/${productId}`, {
                 credentials: 'include'
