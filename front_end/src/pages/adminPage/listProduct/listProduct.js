@@ -4,6 +4,7 @@ import "./style.scss";
 import { AiFillDelete } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import {formatter} from "../../../utils/formatter";
 
 const ListProduct = () => {
     const [products, setProducts] = useState([]);
@@ -162,7 +163,7 @@ const ListProduct = () => {
                 <thead>
                 <tr>
                     <th>Xóa</th>
-                    <th>STT</th>
+                    <th>ID</th>
                     <th>Tên sản phẩm</th>
                     <th>Mô tả</th>
                     <th>Giá</th>
@@ -179,7 +180,7 @@ const ListProduct = () => {
                         <td>{item.productId}</td>
                         <td>{item.name}</td>
                         <td>{item.description}</td>
-                        <td>{item.price}</td>
+                        <td>{formatter(item.price)}</td>
                         <td>{item.quantityAvailable}</td>
                         <td>{item.categoryName}</td>
                         <td>{item.status}</td>
@@ -215,6 +216,7 @@ const ListProduct = () => {
                 <div>
                     <label>Loại:</label>
                     <select id="categoryName" value={productData.categoryName} onChange={handleInputChange}>
+                        <option value="">Chọn loại</option> {/* Thêm dòng này */}
                         {categories.map(category => (
                             <option key={category.categoryId} value={category.name}>{category.name}</option>
                         ))}

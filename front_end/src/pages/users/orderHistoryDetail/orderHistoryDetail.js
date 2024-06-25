@@ -1,6 +1,7 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import { formatter } from "../../../utils/formatter";
 import "./style.scss";
 
 const OrderHistoryDetail = () => {
@@ -60,9 +61,9 @@ const OrderHistoryDetail = () => {
                                         <tr className="table-body-row" key={item.productId}>
                                             <td className="product-image"><img src={item.imageUrl} alt={item.productName} /></td>
                                             <td className="product-name">{item.productName}</td>
-                                            <td className="product-price">{item.price} VND</td>
+                                            <td className="product-price">{formatter(item.price)} VND</td>
                                             <td className="product-quantity">{item.quantity}</td>
-                                            <td className="product-total">{item.price * item.quantity} VND</td>
+                                            <td className="product-total">{formatter(item.price * item.quantity)} VND</td>
                                         </tr>
                                     ))}
                                     </tbody>
@@ -82,15 +83,15 @@ const OrderHistoryDetail = () => {
                                     <tbody>
                                     <tr className="total-data">
                                         <td><strong>Tạm tính: </strong></td>
-                                        <td>{orderDetail.totalAmount} VND</td>
+                                        <td>{formatter(orderDetail.totalAmount)}</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Phí ship: </strong></td>
-                                        <td>10000 VND</td>
+                                        <td>{formatter(shippingMoney)}</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Tổng cộng: </strong></td>
-                                        <td>{orderDetail.totalAmount + shippingMoney} VND</td>
+                                        <td>{formatter(orderDetail.totalAmount + shippingMoney)}</td>
                                     </tr>
                                     </tbody>
                                 </table>

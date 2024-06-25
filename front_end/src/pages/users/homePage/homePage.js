@@ -14,6 +14,8 @@ const HomePage = () => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('Tất cả');
+    const [currentPage, setCurrentPage] = useState(0);
+    const productsPerPage = 20;
 
     const navigate = useNavigate();
 
@@ -46,6 +48,13 @@ const HomePage = () => {
 
         axios.post('http://localhost:8080/api/cart/add', cartItem, { withCredentials: true })
             .then(response => {
+                // Add active class to button
+                const button = document.querySelector(`li[data-id="${productId}"]`);
+                button.classList.add('active');
+                // Remove active class after 0.5s
+                setTimeout(() => {
+                    button.classList.remove('active');
+                }, 500);
             })
             .catch(error => {
                 console.error("There was an error adding the product to the cart!", error);
@@ -81,7 +90,7 @@ const HomePage = () => {
                             <li onClick={() => navigate(`/chi-tiet-san-pham/${item.productId}`)}>
                                 <AiOutlineEye />
                             </li>
-                            <li onClick={() => handleAddToCart(item.productId)}>
+                            <li onClick={() => handleAddToCart(item.productId)} data-id={item.productId}>
                                 <AiOutlineShoppingCart />
                             </li>
                         </ul>
@@ -103,6 +112,14 @@ const HomePage = () => {
             return products.filter(product => product.categoryName === selectedCategory);
         }
     };
+
+    const handlePageClick = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const filteredProducts = getFilteredProducts();
+    const pageCount = Math.ceil(filteredProducts.length / productsPerPage);
+    const displayedProducts = filteredProducts.slice(currentPage * productsPerPage, (currentPage + 1) * productsPerPage);
 
     return (
         <>
@@ -138,20 +155,40 @@ const HomePage = () => {
                                 ))}
                             </TabList>
                             <TabPanel>
-                                {renderFeaturedProducts(getFilteredProducts())}
+                                <div className="row">
+                                    {renderFeaturedProducts(displayedProducts)}
+                                </div>
                             </TabPanel>
                             {categories.map((category, index) => (
                                 <TabPanel key={index}>
-                                    {renderFeaturedProducts(getFilteredProducts())}
+                                    <div className="row">
+                                        {renderFeaturedProducts(displayedProducts)}
+                                    </div>
                                 </TabPanel>
                             ))}
                         </Tabs>
                     </div>
+
+                    <Pagination pageCount={pageCount} onPageChange={handlePageClick} currentPage={currentPage} />
                 </div>
             </div>
             {/* Featured End */}
         </>
     );
 };
+
+const Pagination = ({ pageCount, onPageChange, currentPage }) => (
+    <div className="pagination">
+        {[...Array(pageCount)].map((_, index) => (
+            <button
+                key={index}
+                className={`page-number ${index === currentPage ? 'active' : ''}`}
+                onClick={() => onPageChange(index)}
+            >
+                {index + 1}
+            </button>
+        ))}
+    </div>
+);
 
 export default memo(HomePage);

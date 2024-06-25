@@ -137,7 +137,7 @@ const OrderTable = ({ orders, onStatusChange }) => {
         <table style={{ width: "100%" }} className="list-order">
             <thead>
             <tr>
-                <th>STT</th>
+                <th>Mã đơn hàng</th>
                 <th>Họ tên</th>
                 <th>SĐT</th>
                 <th>Ngày đặt hàng</th>
@@ -151,7 +151,7 @@ const OrderTable = ({ orders, onStatusChange }) => {
             <tbody>
             {orders.map((order, index) => (
                 <tr key={order.orderId}>
-                    <td>{index + 1}</td>
+                    <td>{order.orderId}</td>
                     <td>{order.userName}</td>
                     <td>{order.phoneNumber}</td>
                     <td>{new Date(order.orderDate).toLocaleString()}</td>

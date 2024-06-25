@@ -24,10 +24,37 @@ const Register = () => {
         });
     };
 
+    const validateForm = () => {
+        const newErrors = {};
+        const fullnameRegex = /^[a-zA-ZÀ-ỹ\s]{8,20}$/;
+        const phoneRegex = /^\d{10,15}$/;
+        const usernameRegex = /^[a-zA-Z0-9]{8,16}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/;
+
+        if (!fullnameRegex.test(formData.fullname)) {
+            newErrors.fullname = 'Họ và tên phải có từ 8-20 ký tự, không chứa ký tự đặc biệt trừ dấu tiếng Việt.';
+        }
+        if (!phoneRegex.test(formData.phone)) {
+            newErrors.phone = 'Số điện thoại phải là số và có từ 10-15 số.';
+        }
+        if (!usernameRegex.test(formData.username)) {
+            newErrors.username = 'Tài khoản phải có từ 8-16 ký tự, không chứa ký tự đặc biệt kể cả dấu tiếng Việt.';
+        }
+        if (!passwordRegex.test(formData.password)) {
+            newErrors.password = 'Mật khẩu phải có từ 8-20 ký tự, chứa cả số và chữ, không chứa ký tự đặc biệt kể cả dấu tiếng Việt.';
+        }
+        if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = 'Mật khẩu và xác nhận mật khẩu không khớp';
+        }
+
+        return newErrors;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (formData.password !== formData.confirmPassword) {
-            setErrors({ confirmPassword: 'Mật khẩu và xác nhận mật khẩu không khớp' });
+        const newErrors = validateForm();
+        if (Object.keys(newErrors).length > 0) {
+            setErrors(newErrors);
             return;
         }
 
@@ -38,7 +65,7 @@ const Register = () => {
                 fullName: fullname,
                 phoneNumber: phone,
                 gender,
-                dateOfBirth: new Date(dob).toISOString(),// Chuyển đổi sang định dạng ISO
+                dateOfBirth: new Date(dob).toISOString(),
                 username,
                 password
             });
@@ -69,6 +96,7 @@ const Register = () => {
                     <div className="form-group">
                         <label htmlFor="fullname">Họ và tên:</label>
                         <input type="text" id="fullname" name="fullname" required value={formData.fullname} onChange={handleChange} />
+                        {errors.fullname && <p className="error-message">{errors.fullname}</p>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="phone">Số điện thoại:</label>
@@ -95,6 +123,7 @@ const Register = () => {
                     <div className="form-group">
                         <label htmlFor="password">Mật khẩu:</label>
                         <input type="password" id="password" name="password" required value={formData.password} onChange={handleChange} />
+                        {errors.password && <p className="error-message">{errors.password}</p>}
                     </div>
                     <div className="form-group">
                         <label htmlFor="confirm-password">Nhập lại mật khẩu:</label>

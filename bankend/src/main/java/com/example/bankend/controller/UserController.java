@@ -26,9 +26,9 @@ public class UserController {
         User user = userService.login(loginDto);
         if (user != null) {
             session.setAttribute("user", user);
-            return new ResponseEntity<>("Login successful", HttpStatus.OK);
+            return new ResponseEntity<>("Đăng nhập thành công", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("Invalid username or password or account is not active", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Tên người dùng hoặc mật khẩu không hợp lệ hoặc tài khoản đã bị khóa", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -45,7 +45,7 @@ public class UserController {
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpSession session) {
         session.removeAttribute("user");
-        return new ResponseEntity<>("Logout successful", HttpStatus.OK);
+        return new ResponseEntity<>("Đăng xuất thành công", HttpStatus.OK);
     }
 
     @PostMapping("/register")
@@ -53,13 +53,13 @@ public class UserController {
         Map<String, String> errors = new HashMap<>();
 
         if (userService.existsByUsername(registerDto.getUsername())) {
-            errors.put("username", "Tên tài khoản đã tồn tại.");
+            errors.put("username", "Tên tài khoản đã được sử dụng.");
         }
         if (userService.existsByEmail(registerDto.getEmail())) {
-            errors.put("email", "Email đã tồn tại.");
+            errors.put("email", " Dịa chỉ Email đã được sử dụng.");
         }
         if (userService.existsByPhoneNumber(registerDto.getPhoneNumber())) {
-            errors.put("phone", "Số điện thoại đã tồn tại.");
+            errors.put("phone", "Số điện thoại đã được sử dụng.");
         }
 
         if (!errors.isEmpty()) {
@@ -103,9 +103,9 @@ public class UserController {
         if (currentUser != null && currentUser.getRole() == UserRole.ADMIN) {
             boolean isUpdated = userService.adminUpdateUser(id, adminUpdateDto);
             if (isUpdated) {
-                return new ResponseEntity<>("User updated successfully", HttpStatus.OK);
+                return new ResponseEntity<>("Cập nhật thông tin tài khoản thành công", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Failed to update user", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Cập nhật thông tin tài khoản thất bại", HttpStatus.BAD_REQUEST);
             }
         } else {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
@@ -151,7 +151,7 @@ public class UserController {
                 return new ResponseEntity<>(Map.of("error", "số điện thoại đã được sử dụng"), HttpStatus.BAD_REQUEST);
             }
         }
-        return new ResponseEntity<>(Map.of("error", "Unauthorized"), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(Map.of("error", "Không được phép"), HttpStatus.UNAUTHORIZED);
     }
 
     @PutMapping("/change-password")
@@ -160,9 +160,9 @@ public class UserController {
         if (currentUser != null) {
             boolean isChanged = userService.changePassword(currentUser.getUserId(), changePasswordDto);
             if (isChanged) {
-                return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
+                return new ResponseEntity<>("Thay đổi mật khẩu thành công", HttpStatus.OK);
             } else {
-                return new ResponseEntity<>("Current password is incorrect", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("mật khẩu hiện tại không đúng", HttpStatus.BAD_REQUEST);
             }
         }
         return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
