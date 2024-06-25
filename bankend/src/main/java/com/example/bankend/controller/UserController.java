@@ -147,10 +147,11 @@ public class UserController {
                     updatedProfileDto.setDateOfBirth(currentUser.getDateOfBirth());
                     return new ResponseEntity<>(updatedProfileDto, HttpStatus.OK);
                 }
+            } else {
+                return new ResponseEntity<>(Map.of("error", "số điện thoại đã được sử dụng"), HttpStatus.BAD_REQUEST);
             }
-            return new ResponseEntity<>("Phone number already exists", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(Map.of("error", "Unauthorized"), HttpStatus.UNAUTHORIZED);
     }
 
     @PutMapping("/change-password")

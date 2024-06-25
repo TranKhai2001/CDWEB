@@ -50,14 +50,27 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+
     @Override
-    public ProductDTO getProductById(Long productId) {
+    public ProductDTO getProductByIdAdmin(Long productId) {
         logger.info("Fetching product with ID: {}", productId);
         Optional<Product> optionalProduct = productRepository.findById(productId);
         if (optionalProduct.isPresent()) {
             return convertToDto(optionalProduct.get());
         } else {
             logger.warn("Product with ID: {} not found", productId);
+            return null;
+        }
+    }
+
+    @Override
+    public ProductDTO getProductById(Long productId) {
+        logger.info("Fetching active product with ID: {}", productId);
+        Optional<Product> optionalProduct = productRepository.findByIdAndStatus(productId, ProductStatus.ACTIVE);
+        if (optionalProduct.isPresent()) {
+            return convertToDto(optionalProduct.get());
+        } else {
+            logger.warn("Active product with ID: {} not found", productId);
             return null;
         }
     }
