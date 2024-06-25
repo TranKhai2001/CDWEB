@@ -46,7 +46,13 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order placeOrder(User user, OrderDTO orderDTO) {
         Cart cart = cartRepository.findByUserAndStatus(user, Cart.CartStatus.ACTIVE)
-                .orElseThrow(() -> new IllegalArgumentException("Active cart not found for user"));
+                .orElseThrow(() -> new IllegalArgumentException("\n" +
+                        "Không tìm thấy giỏ hàng đang hoạt động cho người dùng"));
+
+        // Kiểm tra nếu giỏ hàng trống
+        if (cart.getItems().isEmpty()) {
+            throw new IllegalArgumentException("Giỏ hàng của bạn trống, không thể thanh toán");
+        }
 
         Order order = new Order();
         order.setUser(user);
@@ -245,13 +251,41 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
         order.setStatus(Order.OrderStatus.valueOf(status));
-        if (status.equals("DELIVERED")) {
-            order.setPaymentStatus(Order.PaymentStatus.PAID);
-        }
-        if (status.equals("CANCELLED")) {
-            order.setPaymentStatus(Order.PaymentStatus.FAILED);
+        switch (status) {
+            case "DELIVERED" -> {
+                order.setPaymentStatus(Order.PaymentStatus.PAID);
+                // Send delivery confirmation email
+                sendDeliveryConfirmationEmail(order.getUser(), order);
+            }
+            case "SHIPPED" -> {
+                // Send shipping notification email
+                sendShippingNotificationEmail(order.getUser(), order);
+            }
+            case "CANCELLED" -> {
+                order.setPaymentStatus(Order.PaymentStatus.FAILED);
+                // Send order cancellation email
+                sendOrderCancellationEmail(order.getUser(), order);
+            }
         }
         orderRepository.save(order);
+    }
+
+    private void sendOrderCancellationEmail(User user, Order order) {
+        String subject = "Đơn hàng đã bị hủy";
+        String text = "Đơn hàng của bạn đã bị hủy. Mã đơn hàng: " + order.getOrderId();
+        emailService.sendOrderConfirmationEmail(user.getEmail(), subject, text);
+    }
+
+    private void sendShippingNotificationEmail(User user, Order order) {
+        String subject = "Đơn hàng đang được giao";
+        String text = "Đơn hàng của bạn đang được giao tới, hãy chú ý điện thoại. Mã đơn hàng: " + order.getOrderId();
+        emailService.sendOrderConfirmationEmail(user.getEmail(), subject, text);
+    }
+
+    private void sendDeliveryConfirmationEmail(User user, Order order) {
+        String subject = "Đơn hàng đã được giao";
+        String text = "Đơn hàng của bạn đã được giao thành công. Mã đơn hàng: " + order.getOrderId();
+        emailService.sendOrderConfirmationEmail(user.getEmail(), subject, text);
     }
 
     @Override

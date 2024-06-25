@@ -2,6 +2,7 @@ import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import "./style.scss";
+import {formatter} from "../../../utils/formatter";
 
 const OrderDetailAdmin = () => {
     const { orderId } = useParams();
@@ -45,13 +46,23 @@ const OrderDetailAdmin = () => {
         }
     }, [orderId, currentUser]);
 
-    if (!orderDetail) {
-        return <div>Loading...</div>;
-    }
-
     const handleGoBack = () => {
         navigate(-1);
     };
+
+    const handleStatusChange = (orderId, newStatus) => {
+        axios.put(`http://localhost:8080/api/order/update-status/${orderId}`, { status: newStatus }, { withCredentials: true })
+            .then(response => {
+                setOrderDetail({ ...orderDetail, status: newStatus });
+            })
+            .catch(error => {
+                console.error("There was an error updating the order status!", error);
+            });
+    };
+
+    if (!orderDetail) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container">
@@ -75,9 +86,9 @@ const OrderDetailAdmin = () => {
                                         <tr className="table-body-row" key={item.productId}>
                                             <td className="product-image"><img src={item.imageUrl} alt={item.productName} /></td>
                                             <td className="product-name">{item.productName}</td>
-                                            <td className="product-price">{item.price} VND</td>
+                                            <td className="product-price">{formatter(item.price)}</td>
                                             <td className="product-quantity">{item.quantity}</td>
-                                            <td className="product-total">{item.price * item.quantity} VND</td>
+                                            <td className="product-total">{formatter(item.price * item.quantity)}</td>
                                         </tr>
                                     ))}
                                     </tbody>
@@ -97,20 +108,45 @@ const OrderDetailAdmin = () => {
                                     <tbody>
                                     <tr className="total-data">
                                         <td><strong>Tạm tính: </strong></td>
-                                        <td>{orderDetail.totalAmount} VND</td>
+                                        <td>{formatter(orderDetail.totalAmount)}</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Phí ship: </strong></td>
-                                        <td>10000 VND</td>
+                                        <td>{formatter(shippingMoney)}</td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Tổng cộng: </strong></td>
-                                        <td>{orderDetail.totalAmount + shippingMoney} VND</td>
+                                        <td>{formatter(orderDetail.totalAmount + shippingMoney)}</td>
                                     </tr>
                                     </tbody>
                                 </table>
                                 <div className="cart-buttons">
-                                    <button onClick={handleGoBack} className="boxed-btn">Trở về</button> {/* Thay đổi thẻ <a> thành <button> */}
+
+                                    {orderDetail.status === 'PENDING' && (
+                                        <>
+                                            <button className="boxed-btn" onClick={() => handleStatusChange(orderDetail.orderId, 'PROCESSING')}>Xác nhận</button>
+                                            <button className="boxed-btn" onClick={() => handleStatusChange(orderDetail.orderId, 'CANCELLED')}>Hủy</button>
+                                        </>
+                                    )}
+                                    {orderDetail.status === 'PROCESSING' && (
+                                        <>
+                                            <button className="boxed-btn" onClick={() => handleStatusChange(orderDetail.orderId, 'SHIPPED')}>Giao</button>
+                                            <button className="boxed-btn" onClick={() => handleStatusChange(orderDetail.orderId, 'CANCELLED')}>Hủy</button>
+                                        </>
+                                    )}
+                                    {orderDetail.status === 'SHIPPED' && (
+                                        <>
+                                            <button className="boxed-btn" onClick={() => handleStatusChange(orderDetail.orderId, 'DELIVERED')}>Giao hàng thành công</button>
+                                            <button className="boxed-btn" onClick={() => handleStatusChange(orderDetail.orderId, 'CANCELLED')}>Hủy</button>
+                                        </>
+                                    )}
+                                    {orderDetail.status === 'CANCELLED' && (
+                                        <span>Đơn hàng đã bị hủy</span>
+                                    )}
+                                    {orderDetail.status === 'DELIVERED' && (
+                                        <span>Đã giao hàng thành công</span>
+                                    )}
+                                    <button onClick={handleGoBack} className="boxed-btn">Trở về</button>
                                 </div>
                             </div>
                         </div>

@@ -32,9 +32,9 @@ public class CartController {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             cartService.addCartItem(user, cartItemDTO);
-            return new ResponseEntity<>("Product added to cart", HttpStatus.OK);
+            return new ResponseEntity<>("Sản phẩm được thêm vào giỏ hàng thành công", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Người dùng chưa đăng nhập", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -65,9 +65,9 @@ public class CartController {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             cartService.updateCartItemQuantity(user, cartItemDTO);
-            return new ResponseEntity<>("Cart item updated", HttpStatus.OK);
+            return new ResponseEntity<>("Đã cập nhật mặt hàng trong giỏ hàng", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Người dùng chưa đăng nhập", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -76,9 +76,9 @@ public class CartController {
         User user = (User) session.getAttribute("user");
         if (user != null) {
             cartService.removeCartItem(user, productId);
-            return new ResponseEntity<>("Product removed from cart", HttpStatus.OK);
+            return new ResponseEntity<>("Sản phẩm đã bị xóa khỏi giỏ hàng", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Người dùng chưa đăng nhập", HttpStatus.UNAUTHORIZED);
         }
     }
 
@@ -93,9 +93,9 @@ public class CartController {
                 }
             }
             // Process checkout (not implemented in this example)
-            return new ResponseEntity<>("Checkout successful", HttpStatus.OK);
+            return new ResponseEntity<>("Thanh toán thành công", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("User not logged in", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Người dùng chưa đăng nhập", HttpStatus.UNAUTHORIZED);
         }
     }
 }

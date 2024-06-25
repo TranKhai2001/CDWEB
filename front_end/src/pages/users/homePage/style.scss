@@ -2,11 +2,11 @@
 @import "src/style/pages/theme";
 @import "src/style/pages/all";
 
-.container_categories_slider{
+.container_categories_slider {
   max-width: 1200px;
-  .categories_slider{
+  .categories_slider {
     margin-top: 30px;
-    .categories_slider_item{
+    .categories_slider_item {
       height: 400px;
       max-width: 300px;
       display: block;
@@ -16,63 +16,63 @@
       background-position: top center;
       border-radius: 5px;
 
-      p{
+      p {
         position: absolute;
         left: 5%;
         bottom: 0px;
         text-align: center;
         font-size: 18px;
-        color: black ;
+        color: black;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 2px;
         padding: 12px 0px 10px;
         width: 270px;
         cursor: pointer;
-        &:hover{
-          background: map.get($theme-colors,"main");
+        &:hover {
+          background: map.get($theme-colors, "main");
           color: white;
         }
       }
     }
-    .react-multi-carousel-item:not(:last-child){
+    .react-multi-carousel-item:not(:last-child) {
       margin-right: 15px;
     }
   }
 }
 
-.featured{
+.featured {
   margin-top: 50px;
-  .section-title{
+  .section-title {
     margin-bottom: 50px;
     text-align: center;
-    h2{
+    h2 {
       position: relative;
       text-transform: inherit;
     }
-    h2:after{
+    h2:after {
       position: absolute;
       left: 0;
       bottom: -40%;
       right: 0;
       height: 4px;
       width: 80px;
-      background: map.get($theme-colors,"main");
+      background: map.get($theme-colors, "main");
       content: "";
       margin: 0 auto;
     }
   }
-  .react-tabs{
+  .react-tabs {
     margin-top: 50px;
-    ul{
+    ul {
       justify-content: center;
       margin-bottom: 50px;
       border-bottom: none;
 
-      li{
+      li {
         list-style: none;
         font-size: 18px;
-        color: map.get($theme-colors,"normal-text");
+        color: map.get($theme-colors, "normal-text");
         display: inline-block;
         margin-right: 25px;
         cursor: pointer;
@@ -80,16 +80,16 @@
       }
     }
   }
-  .featured_item{
+  .featured_item {
     margin-bottom: 50px;
     margin-left: 10px;
 
-    &:hover{
-      .featured_item_pic_hover{
+    &:hover {
+      .featured_item_pic_hover {
         bottom: -15% !important;
       }
     }
-    .featured_item_pic{
+    .featured_item_pic {
       height: 270px;
       max-width: 100%;
       position: relative;
@@ -97,30 +97,30 @@
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
-      &:hover{
-        border: 1px solid map.get($theme-colors,"main");
+      &:hover {
+        border: 1px solid map.get($theme-colors, "main");
       }
-      .featured_item_pic_hover{
+      .featured_item_pic_hover {
         position: absolute;
         left: 0;
         bottom: -40%;
         width: 100%;
         text-align: center;
         transition: all, 0.5s;
-        li{
+        li {
           list-style: none;
           display: inline-block;
           margin-right: 10px;
 
-          &:hover{
-            svg{
+          &:hover {
+            svg {
               background: #7fad39;
               border-color: #7fad39;
               color: white;
               transform: rotate(360deg) !important;
             }
           }
-          svg{
+          svg {
             padding: 10px;
             height: 30px;
             width: 30px;
@@ -133,39 +133,78 @@
         }
       }
     }
-    .featured_item_text{
+    .featured_item_text {
       text-align: center;
-      h6{
+      h6 {
         margin-top: 10px;
         font-size: 16px;
-        a{
+        a {
           text-decoration: none;
-          color: map.get($theme-colors,"normal-text");
+          color: map.get($theme-colors, "normal-text");
         }
       }
-      h5{
-        color: map.get($theme-colors,"normal-text");
-        font-size: 18px;
-        font-weight: 700;
-        margin-top: 10px;
+      h5 {
+        color: map.get($theme-colors, "main");
+        margin-top: 5px;
       }
     }
   }
 }
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
 
-@include Responsive($MEDIUM_DEVICE){
-  .container{
+  .page-number {
+    margin: 0 5px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #f3f3f3;
+    cursor: pointer;
+    &.active {
+      background-color: #7fad39;
+      color: white;
+    }
+    &:hover {
+      background-color: #d3d3d3;
+    }
+  }
+
+}
+
+@include Responsive($MEDIUM_DEVICE) {
+  .container {
     width: 990px !important;
   }
 }
-@include Responsive($TABLET_DEVICE){
+@include Responsive($TABLET_DEVICE) {
   .container {
     width: 750px !important;
   }
-
 }
-@include Responsive($WIDE_MOBILE){
+@include Responsive($WIDE_MOBILE) {
   .categories_slider_item p {
     left: 0% !important;
   }
 }
+
+.featured_item_pic_hover li {
+  display: inline-block;
+  padding: 10px;
+  margin: 0 5px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border-radius: 100%;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7);
+  }
+
+  &.active {
+    transform: scale(1.1);
+    background-color: rgba(0, 128, 0, 0.7);
+  }
+}
+

@@ -1,8 +1,10 @@
 import React, { useState, useEffect, memo } from 'react';
 import axios from 'axios';
 import { FaRegWindowMinimize } from "react-icons/fa";
+import { AiFillDelete } from "react-icons/ai";
 import "./style.scss";
 import { Link, useNavigate } from "react-router-dom";
+import { formatter } from "../../../utils/formatter";
 import { ROUTERS } from "../../../utils/router";
 
 // Hàm gọi API lấy thông tin giỏ hàng
@@ -171,12 +173,12 @@ const Cart = () => {
                                             <tr className="table-body-row" key={item.productId}>
                                                 <td className="product-remove">
                                                     <a href="#" onClick={(event) => handleRemoveCartItem(item.productId, event)}>
-                                                        <FaRegWindowMinimize />
+                                                        <AiFillDelete />
                                                     </a>
                                                 </td>
                                                 <td className="product-image"><img src={item.imageUrl} alt={item.productName} /></td>
                                                 <td className="product-name">{item.productName}</td>
-                                                <td className="product-price">{item.price} VND</td>
+                                                <td className="product-price">{formatter(item.price)}</td>
                                                 <td className="product-quantity">
                                                     <input
                                                         type="number"
@@ -185,7 +187,7 @@ const Cart = () => {
                                                         min="0"
                                                     />
                                                 </td>
-                                                <td className="product-total">{item.price * item.quantity} VND</td>
+                                                <td className="product-total">{formatter(item.price * item.quantity)}</td>
                                             </tr>
                                         ))
                                     ) : (
@@ -210,15 +212,15 @@ const Cart = () => {
                                     <tbody>
                                     <tr className="total-data">
                                         <td><strong>Tạm tính: </strong></td>
-                                        <td>{total} </td>
+                                        <td>{formatter(total)} </td>
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Phí ship: </strong></td>
-                                        <td>{shippingMoney} VND</td> {/* Thay đổi nếu có phí ship */}
+                                        <td>{formatter(shippingMoney)}</td> {/* Thay đổi nếu có phí ship */}
                                     </tr>
                                     <tr className="total-data">
                                         <td><strong>Tổng cộng: </strong></td>
-                                        <td>{total + shippingMoney} VND</td>
+                                        <td>{formatter(total + shippingMoney)}</td>
                                     </tr>
                                     </tbody>
                                 </table>
