@@ -18,6 +18,7 @@ import ListOrder from "./pages/adminPage/listOrder/listOrder";
 import UserDetails from "./pages/adminPage/userDetails/userDetails";
 import ChangePassword from "./pages/users/changePassword/changePassword";
 import ProductDetailAdmin from "./pages/adminPage/productDetailAdmin/productDetailAdmin";
+import OrderDetailAdmin from "./pages/adminPage/orderDetailAdmin/orderDetailAdmin";
 
 function renderUserRouter() {
     const userRouters = [
@@ -90,6 +91,10 @@ function renderUserRouter() {
         {
             path: ROUTERS.USER.PRODUCTDETAILADMIN,
             component: <ProductDetailAdmin />,
+        },
+        {
+            path: ROUTERS.USER.ORDERDETAILADMIN,
+            component: <OrderDetailAdmin />,
         }
     ];
     return (
