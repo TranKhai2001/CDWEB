@@ -5,6 +5,7 @@ import com.example.bankend.entity.*;
 import com.example.bankend.repository.ProductRepository;
 import com.example.bankend.repository.UserRepository;
 import com.example.bankend.service.UserService;
+import com.example.bankend.util.ValidationUtil;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -43,6 +45,19 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean register(RegisterDto registerDto) {
+        if (!ValidationUtil.isValidFullName(registerDto.getFullName())) {
+            throw new IllegalArgumentException("Invalid full name");
+        }
+        if (!ValidationUtil.isValidPhone(registerDto.getPhoneNumber())) {
+            throw new IllegalArgumentException("Invalid phone number");
+        }
+        if (!ValidationUtil.isValidUsername(registerDto.getUsername())) {
+            throw new IllegalArgumentException("Invalid username");
+        }
+        if (!ValidationUtil.isValidPassword(registerDto.getPassword())) {
+            throw new IllegalArgumentException("Invalid password");
+        }
+
         if (userRepository.findByUsername(registerDto.getUsername()) != null) {
             return false;
         }
@@ -73,7 +88,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> getAllUsers() {
-        return userRepository.findAll();
+        return userRepository.findAll().stream()
+                .filter(user -> !user.getUsername().equals("haidang2"))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -99,6 +116,13 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public boolean updateProfile(Long userId, UpdateProfileDto updateProfileDto) {
+        if (!ValidationUtil.isValidFullName(updateProfileDto.getFullName())) {
+            throw new IllegalArgumentException("Invalid full name");
+        }
+        if (!ValidationUtil.isValidPhone(updateProfileDto.getPhoneNumber())) {
+            throw new IllegalArgumentException("Invalid phone number");
+        }
+
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -126,6 +150,9 @@ public class UserServiceImpl implements UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             if (passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
+                if (!ValidationUtil.isValidPassword(changePasswordDto.getNewPassword())) {
+                    throw new IllegalArgumentException("Invalid password");
+                }
                 user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
                 userRepository.save(user);
                 return true;

@@ -81,6 +81,14 @@ const ListProduct = () => {
     }, [currentUser, navigate]);
 
     const handleAddProduct = () => {
+        // Validation for empty fields
+        for (const [key, value] of Object.entries(productData)) {
+            if (value === "") {
+                setMessage(`Please fill out the ${key} field.`);
+                return;
+            }
+        }
+
         axios.post('http://localhost:8080/api/products/add', productData, { withCredentials: true })
             .then(response => {
                 console.log("Product added successfully");
@@ -227,7 +235,7 @@ const ListProduct = () => {
                 <div>
                     <label>Loại:</label>
                     <select id="categoryName" value={productData.categoryName} onChange={handleInputChange}>
-                        <option value="">Chọn loại</option> {/* Thêm dòng này */}
+                        <option value="">Chọn loại</option>
                         {categories.map(category => (
                             <option key={category.categoryId} value={category.name}>{category.name}</option>
                         ))}

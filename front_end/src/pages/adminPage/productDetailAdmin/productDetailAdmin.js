@@ -155,7 +155,7 @@ const ProductDetailAdmin = () => {
                 <div className="product-info">
                     <h3>{isEditing ? <input type="text" name="name" value={updatedProduct.name} onChange={handleChange} /> : product.name}</h3>
                     <p><strong>Mô tả:</strong> {isEditing ? <textarea name="description" value={updatedProduct.description} onChange={handleChange}></textarea> : product.description}</p>
-                    <p><strong>Giá:</strong> {isEditing ? <input type="number" name="price" value={formatter(updatedProduct.price)} onChange={handleChange} /> : `${formatter(product.price)}`}</p>
+                    <p><strong>Giá:</strong> {isEditing ? <input type="number" name="price" value={updatedProduct.price} onChange={handleChange} /> : `${formatter(product.price)}`}</p>
                     <p><strong>Số lượng có sẵn:</strong> {isEditing ? <input type="number" name="quantityAvailable" value={updatedProduct.quantityAvailable} onChange={handleChange} /> : product.quantityAvailable}</p>
                     <p><strong>Đã bán:</strong> {product.sold}</p>
                     <p><strong>Loại:</strong> {isEditing ? (
