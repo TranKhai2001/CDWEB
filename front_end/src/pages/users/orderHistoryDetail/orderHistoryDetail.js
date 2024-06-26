@@ -7,20 +7,49 @@ import "./style.scss";
 const OrderHistoryDetail = () => {
     const { orderId } = useParams();
     const [orderDetail, setOrderDetail] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     const shippingMoney = 10000;
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/api/order/history/${orderId}`, {
-            withCredentials: true
-        })
-            .then(response => {
+        const fetchCurrentUser = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/check-login', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUser(data);
+                } else {
+                    setError('Bạn không có quyền truy cập');
+                    navigate('/dang-nhap');
+                }
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+                navigate('/dang-nhap');
+            }
+        };
+
+        fetchCurrentUser();
+    }, [navigate]);
+
+    useEffect(() => {
+        const fetchOrderDetail = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/api/order/history/${orderId}`, {
+                    withCredentials: true
+                });
                 setOrderDetail(response.data);
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('There was an error fetching the order detail!', error);
-            });
-    }, [orderId]);
+            }
+        };
+
+        if (currentUser) {
+            fetchOrderDetail();
+        }
+    }, [orderId, currentUser]);
 
     const handleReorder = () => {
         axios.post(`http://localhost:8080/api/order/reorder/${orderId}`, {}, {

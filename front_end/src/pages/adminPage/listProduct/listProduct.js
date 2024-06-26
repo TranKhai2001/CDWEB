@@ -4,7 +4,7 @@ import "./style.scss";
 import { AiFillDelete } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import {formatter} from "../../../utils/formatter";
+import { formatter } from "../../../utils/formatter";
 
 const ListProduct = () => {
     const [products, setProducts] = useState([]);
@@ -23,6 +23,9 @@ const ListProduct = () => {
         unit: "",
         status: "ACTIVE"
     });
+    const [currentPage, setCurrentPage] = useState(0);
+    const productsPerPage = 10;
+
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -75,7 +78,7 @@ const ListProduct = () => {
             .catch(error => {
                 console.error("There was an error fetching the categories!", error);
             });
-    }, []);
+    }, [currentUser, navigate]);
 
     const handleAddProduct = () => {
         axios.post('http://localhost:8080/api/products/add', productData, { withCredentials: true })
@@ -153,13 +156,20 @@ const ListProduct = () => {
         }));
     };
 
+    const handlePageClick = (newPage) => {
+        setCurrentPage(newPage);
+    };
+
+    const pageCount = Math.ceil(products.length / productsPerPage);
+    const displayedProducts = products.slice(currentPage * productsPerPage, (currentPage + 1) * productsPerPage);
+
     return (
         <div className="container">
             <div className="section-title">
                 <h2>Danh sách sản phẩm</h2>
             </div>
             {message && <div className="message">{message}</div>}
-            <table style={{width:"100%"}} className="list-product">
+            <table style={{ width: "100%" }} className="list-product">
                 <thead>
                 <tr>
                     <th>Xóa</th>
@@ -174,12 +184,12 @@ const ListProduct = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {products.map((item, index) => (
+                {displayedProducts.map((item, index) => (
                     <tr key={item.productId}>
                         <td><AiFillDelete onClick={() => handleDeleteProduct(item.productId)} /></td>
                         <td>{item.productId}</td>
                         <td>{item.name}</td>
-                        <td>{item.description}</td>
+                        <td>{item.description.length > 100 ? `${item.description.substring(0, 100)}...` : item.description}</td>
                         <td>{formatter(item.price)}</td>
                         <td>{item.quantityAvailable}</td>
                         <td>{item.categoryName}</td>
@@ -193,6 +203,7 @@ const ListProduct = () => {
                 ))}
                 </tbody>
             </table>
+            <Pagination pageCount={pageCount} onPageChange={handlePageClick} currentPage={currentPage} />
             <div className="add-product">
                 <div className="section-title">
                     <h2>Thêm sản phẩm</h2>
@@ -246,6 +257,23 @@ const ListProduct = () => {
                     <button onClick={handleAddProduct}>Thêm sản phẩm</button>
                 </div>
             </div>
+        </div>
+    );
+};
+
+const Pagination = ({ pageCount, onPageChange, currentPage }) => {
+    const pages = Array.from({ length: pageCount }, (_, i) => i);
+    return (
+        <div className="pagination">
+            {pages.map(page => (
+                <button
+                    key={page}
+                    onClick={() => onPageChange(page)}
+                    className={page === currentPage ? "active" : ""}
+                >
+                    {page + 1}
+                </button>
+            ))}
         </div>
     );
 };

@@ -121,6 +121,13 @@ public class ProductServiceImpl implements ProductService {
         Optional<Product> optionalProduct = productRepository.findById(productId);
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
+
+            // Check if the new name already exists in other products
+            Optional<Product> existingProductWithName = productRepository.findByName(productDTO.getName());
+            if (existingProductWithName.isPresent() && !existingProductWithName.get().getProductId().equals(productId)) {
+                throw new ProductAlreadyExistsException("Product with name " + productDTO.getName() + " already exists");
+            }
+
             product.setName(productDTO.getName());
             product.setDescription(productDTO.getDescription());
             product.setPrice(productDTO.getPrice());
@@ -129,6 +136,15 @@ public class ProductServiceImpl implements ProductService {
             product.setWeight(productDTO.getWeight());
             product.setUnit(productDTO.getUnit());
             product.setStatus(productDTO.getStatus());
+
+            // Update product category
+            Optional<Category> optionalCategory = categoryRepository.findById(productDTO.getCategoryId());
+            if (optionalCategory.isPresent()) {
+                product.setCategory(optionalCategory.get());
+            } else {
+                throw new RuntimeException("Category not found");
+            }
+
             productRepository.save(product);
         } else {
             throw new RuntimeException("Product not found");
@@ -153,6 +169,7 @@ public class ProductServiceImpl implements ProductService {
                 product.getPrice(),
                 product.getQuantityAvailable(),
                 product.getSold(),
+                product.getCategory().getCategoryId(),
                 product.getCategory().getName(),
                 product.getImageUrl(),
                 product.getWeight(),

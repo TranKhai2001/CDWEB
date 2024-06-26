@@ -1,4 +1,5 @@
 import ProductDetailAdmin from "../pages/adminPage/productDetailAdmin/productDetailAdmin";
+import CategoryList from "../pages/adminPage/categoryList/categoryList";
 
 export const ROUTERS = {
     USER : {
@@ -20,6 +21,9 @@ export const ROUTERS = {
         LISTPRODUCT: "danh-sach-san-pham",
         LISTODER: "danh-sach-don-hang",
         USERDETAILS : "chi-tiet-nguoi-dung/:userId",
-        PRODUCTDETAILADMIN:"chi-tiet-san-pham-admin/:productId"
+        PRODUCTDETAILADMIN:"chi-tiet-san-pham-admin/:productId",
+        CATEGORYLIST:"danh-sach-danh-muc",
+        CATEGORYDETAIL:"chi-tiet-danh-muc/:categoryId",
+        ADDCATEGORY:"them-danh-muc"
     }
 }
