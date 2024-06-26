@@ -223,7 +223,7 @@ const Header = () => {
                             <i className="fa fa-envelope" /> <AiOutlineMail /> raucuqua@gmail.com
                         </li>
                         <li>
-                            Miễn phí giao hàng từ đơn {formatter(200000)}
+                            Hãy liên hệ với chúng tôi nếu muốn mua hàng với số lượng lớn
                         </li>
                     </ul>
                 </div>
@@ -234,7 +234,7 @@ const Header = () => {
                         <div className="col-6 header-top-left">
                             <ul>
                                 <li><AiOutlineMail />Shoprauqua@gmail.com</li>
-                                <li>Miễn phí giao hàng từ đơn {formatter(200000)}</li>
+                                <li> Hãy liên hệ với chúng tôi để được tư vấn hoặc nếu muốn mua hàng với số lượng lớn</li>
                             </ul>
                         </div>
                         <div className="col-6 header-top-right">

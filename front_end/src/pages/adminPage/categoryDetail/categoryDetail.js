@@ -5,6 +5,7 @@ import "./style.scss";
 
 const CategoryDetail = () => {
     const [category, setCategory] = useState({});
+    const [initialCategory, setInitialCategory] = useState({});
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
     const [currentUser, setCurrentUser] = useState(null);
@@ -45,6 +46,7 @@ const CategoryDetail = () => {
                     withCredentials: true
                 });
                 setCategory(response.data);
+                setInitialCategory(response.data); // Lưu trữ trạng thái ban đầu của danh mục
             } catch (error) {
                 console.error('Error fetching category:', error);
             }
@@ -63,13 +65,13 @@ const CategoryDetail = () => {
         });
     };
 
-
     const handleSave = async () => {
         try {
             const response = await axios.put(`http://localhost:8080/api/categories/admin/${categoryId}`, category, {
                 withCredentials: true
             });
             setCategory(response.data);
+            setInitialCategory(response.data); // Cập nhật trạng thái ban đầu khi lưu
             setIsEditing(false);
         } catch (error) {
             console.error('Error saving category:', error);
@@ -77,6 +79,7 @@ const CategoryDetail = () => {
     };
 
     const handleCancel = () => {
+        setCategory(initialCategory); // Khôi phục trạng thái ban đầu của danh mục
         setIsEditing(false);
     };
 
@@ -102,12 +105,12 @@ const CategoryDetail = () => {
                     {isEditing ? (
                         <>
                             <button type="button" className="button-submit" onClick={handleSave}>Lưu</button>
-                            <button type="button" className="button-submit" onClick={handleCancel}>Trở về</button>
+                            <button type="button" className="button-submit" onClick={handleCancel}>Hủy</button>
                         </>
                     ) : (
                         <>
-                        <button type="button" className="button-submit" onClick={() => setIsEditing(true)}>Cập nhật</button>
-                        <button onClick={() => navigate('/danh-sach-danh-muc')} className="button-submit">Trở về</button>
+                            <button type="button" className="button-submit" onClick={() => setIsEditing(true)}>Cập nhật</button>
+                            <button onClick={() => navigate('/danh-sach-danh-muc')} className="button-submit">Trở về</button>
                         </>
                     )}
                 </form>

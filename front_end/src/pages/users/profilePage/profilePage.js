@@ -194,7 +194,10 @@ const ProfilePage = () => {
                             <button type="button" className="button-submit" onClick={handleCancel}>Trở về</button>
                         </>
                     ) : (
+                        <>
                         <button type="button" className="button-submit" onClick={() => setIsEditing(true)}>Cập nhật</button>
+                            <button onClick={() => navigate('/danh-sach-nguoi-dung')}>Quay lại</button>
+                        </>
                     )}
                 </form>
             </div>
