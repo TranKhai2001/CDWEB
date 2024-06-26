@@ -1,24 +1,41 @@
 import { memo, useEffect, useState } from "react";
 import "./style.scss";
 import { formatter } from "../../../utils/formatter";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
-const getCartDetails = async () => {
-    const API_URL = 'http://localhost:8080/api/cart/details';
-    try {
-        const response = await axios.get(API_URL, { withCredentials: true });
-        return response.data;
-    } catch (error) {
-        console.error('Failed to fetch cart details:', error);
-        throw error;
-    }
-};
-
 const OrderConfirm = () => {
-
     const location = useLocation();
-    const { orderDate, orderId, deliveryAddress,total,shippingMoney ,cartItems} = location.state || {};
+    const { orderDate, orderId, deliveryAddress, total, shippingMoney, cartItems } = location.state || {};
+    const [currentUser, setCurrentUser] = useState(null);
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchCurrentUser = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/check-login', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUser(data);
+                } else {
+                    setError('Bạn không có quyền truy cập');
+                    navigate('/dang-nhap');
+                }
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+                navigate('/dang-nhap');
+            }
+        };
+
+        fetchCurrentUser();
+    }, [navigate]);
+
+    if (!currentUser) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container mt-5 mb-5">
@@ -126,7 +143,7 @@ const OrderConfirm = () => {
                                             </td>
                                             <td>
                                                 <div className="text-right">
-                                                    <span className="font-weight-bold"> {formatter(total+shippingMoney)}</span>
+                                                    <span className="font-weight-bold"> {formatter(total + shippingMoney)}</span>
                                                 </div>
                                             </td>
                                         </tr>

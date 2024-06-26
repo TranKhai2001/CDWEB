@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import React, { useState, useEffect, memo } from "react";
 import "./style.scss";
 import axios from "axios";
 import { formatter } from "../../../utils/formatter";
@@ -18,8 +18,29 @@ const getCartDetails = async () => {
 const Pay = () => {
     const [cartItems, setCartItems] = useState([]);
     const [total, setTotal] = useState(0);
+    const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
     const shippingMoney = 10000;
+
+    useEffect(() => {
+        const checkLoginStatus = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/check-login', {
+                    withCredentials: true
+                });
+                if (response.status === 200) {
+                    setCurrentUser(response.data);
+                } else {
+                    navigate('/dang-nhap');
+                }
+            } catch (error) {
+                console.error('Error checking login status:', error);
+                navigate('/dang-nhap');
+            }
+        };
+
+        checkLoginStatus();
+    }, [navigate]);
 
     useEffect(() => {
         const fetchCartDetails = async () => {
@@ -30,8 +51,10 @@ const Pay = () => {
                 console.error('Error fetching cart details:', error);
             }
         };
-        fetchCartDetails();
-    }, []);
+        if (currentUser) {
+            fetchCartDetails();
+        }
+    }, [currentUser]);
 
     useEffect(() => {
         let totalAmount = 0;
@@ -47,14 +70,13 @@ const Pay = () => {
     });
 
     useEffect(() => {
-        const userFromSession = JSON.parse(sessionStorage.getItem('user'));
-        if (userFromSession) {
+        if (currentUser) {
             setUserInfo({
-                fullName: userFromSession.fullName,
-                phone: userFromSession.phone
+                fullName: currentUser.fullName,
+                phone: currentUser.phone
             });
         }
-    }, []);
+    }, [currentUser]);
 
     const handleUserInfoChange = (e) => {
         const { name, value } = e.target;
@@ -114,6 +136,10 @@ const Pay = () => {
             alert('There was an error placing the order. Please try again.');
         }
     };
+
+    if (!currentUser) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container">

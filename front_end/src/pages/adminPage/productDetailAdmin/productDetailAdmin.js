@@ -2,11 +2,13 @@ import React, { useState, useEffect, memo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "./style.scss";
 import {formatter} from "../../../utils/formatter";
+import axios from 'axios';
 
 const ProductDetailAdmin = () => {
     const { productId } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
+    const [categories, setCategories] = useState([]);
     const [currentUser, setCurrentUser] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [error, setError] = useState('');
@@ -18,9 +20,9 @@ const ProductDetailAdmin = () => {
         weight: "",
         unit: "",
         status: "",
-        imageUrl: ""
+        imageUrl: "",
+        categoryId: ""  // Thêm trạng thái cho danh mục
     });
-
 
     useEffect(() => {
         const fetchCurrentUser = async () => {
@@ -45,80 +47,6 @@ const ProductDetailAdmin = () => {
         fetchCurrentUser();
     }, [navigate]);
 
-    useEffect(() => {
-
-        if (currentUser && currentUser.role !== 'ADMIN') {
-            setError('Bạn không có quyền truy cập');
-            return;
-        }
-        const fetchProduct = async () => {
-            try {
-                const response = await fetch(`http://localhost:8080/api/products/admin/${productId}`, {
-                    credentials: 'include'
-                });
-                if (response.ok) {
-                    const data = await response.json();
-                    setProduct(data);
-                    setUpdatedProduct({
-                        name: data.name,
-                        description: data.description,
-                        price: data.price,
-                        quantityAvailable: data.quantityAvailable,
-                        weight: data.weight,
-                        unit: data.unit,
-                        status: data.status,
-                        imageUrl: data.imageUrl
-                    });
-                } else if (response.status === 404) {
-                    setError('Product not found');
-                } else {
-                    setError('Failed to fetch product details');
-                    navigate('/');
-                }
-            } catch (error) {
-                console.error('Error fetching product details:', error);
-                setError('Error fetching product details');
-            }
-        };
-
-        fetchProduct();
-    }, [productId]);
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setUpdatedProduct({ ...updatedProduct, [name]: value });
-    };
-
-    const handleSave = () => {
-        if (currentUser && currentUser.role !== 'ADMIN') {
-            setError('Bạn không có quyền truy cập');
-            return;
-        }
-        fetch(`http://localhost:8080/api/products/update/${productId}`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            credentials: "include",
-            body: JSON.stringify(updatedProduct)
-        })
-            .then(response => {
-                if (response.ok) {
-                    alert("Product details updated successfully");
-                    // Fetch the updated product details
-                    fetchProductDetails();
-                    setIsEditing(false);
-                } else {
-                    throw new Error("Failed to update product");
-                }
-            })
-            .catch(error => {
-                console.error("Error updating product:", error);
-                setError("Error updating product");
-            });
-    };
-
-// Function to fetch product details
     const fetchProductDetails = async () => {
         if (currentUser && currentUser.role !== 'ADMIN') {
             setError('Bạn không có quyền truy cập');
@@ -139,7 +67,8 @@ const ProductDetailAdmin = () => {
                     weight: data.weight,
                     unit: data.unit,
                     status: data.status,
-                    imageUrl: data.imageUrl
+                    imageUrl: data.imageUrl,
+                    categoryId: data.categoryId  // Lấy ID danh mục hiện tại của sản phẩm
                 });
             } else if (response.status === 404) {
                 setError('Product not found');
@@ -152,10 +81,55 @@ const ProductDetailAdmin = () => {
         }
     };
 
-// Replace the existing useEffect with fetchProductDetails call
     useEffect(() => {
         fetchProductDetails();
     }, [productId]);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/api/categories');
+                setCategories(response.data);
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setUpdatedProduct({ ...updatedProduct, [name]: value });
+    };
+
+    const handleSave = async () => {
+        if (currentUser && currentUser.role !== 'ADMIN') {
+            setError('Bạn không có quyền truy cập');
+            return;
+        }
+        try {
+            const response = await fetch(`http://localhost:8080/api/products/update/${productId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify(updatedProduct)
+            });
+            if (response.ok) {
+                alert("Product details updated successfully");
+                await fetchProductDetails();
+                setIsEditing(false);
+            } else {
+                throw new Error("Failed to update product");
+            }
+        } catch (error) {
+            console.error("Error updating product:", error);
+            alert("Tên sản phẩm sau chỉnh sửa đã tồn tại");
+            // setError("Error updating product");
+        }
+    };
 
     const handleCancel = () => {
         setIsEditing(false);
@@ -184,7 +158,13 @@ const ProductDetailAdmin = () => {
                     <p><strong>Giá:</strong> {isEditing ? <input type="number" name="price" value={formatter(updatedProduct.price)} onChange={handleChange} /> : `${formatter(product.price)}`}</p>
                     <p><strong>Số lượng có sẵn:</strong> {isEditing ? <input type="number" name="quantityAvailable" value={updatedProduct.quantityAvailable} onChange={handleChange} /> : product.quantityAvailable}</p>
                     <p><strong>Đã bán:</strong> {product.sold}</p>
-                    <p><strong>Loại:</strong> {product.categoryName}</p>
+                    <p><strong>Loại:</strong> {isEditing ? (
+                        <select name="categoryId" value={updatedProduct.categoryId} onChange={handleChange}>
+                            {categories.map(category => (
+                                <option key={category.categoryId} value={category.categoryId}>{category.name}</option>
+                            ))}
+                        </select>
+                    ) : product.categoryName}</p>
                     <p><strong>Trọng lượng:</strong> {isEditing ? <input type="text" name="weight" value={updatedProduct.weight} onChange={handleChange} /> : `${product.weight} ${product.unit}`}</p>
                     <p><strong>Ngày tạo:</strong> {new Date(product.createdAt).toLocaleDateString()}</p>
                     <p><strong>Trạng thái:</strong> {isEditing ? <select name="status" value={updatedProduct.status} onChange={handleChange}>
@@ -200,9 +180,12 @@ const ProductDetailAdmin = () => {
                         <button onClick={handleCancel}>Trở về</button>
                     </>
                 ) : (
+                    <>
                     <button onClick={() => setIsEditing(true)}>Chỉnh sửa</button>
+                        <button onClick={() => navigate('/danh-sach-san-pham')}>Quay lại</button>
+                    </>
                 )}
-                <button onClick={() => navigate('/danh-sach-san-pham')}>Quay lại</button>
+
             </div>
         </div>
     );

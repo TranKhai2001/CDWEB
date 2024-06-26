@@ -19,6 +19,9 @@ import UserDetails from "./pages/adminPage/userDetails/userDetails";
 import ChangePassword from "./pages/users/changePassword/changePassword";
 import ProductDetailAdmin from "./pages/adminPage/productDetailAdmin/productDetailAdmin";
 import OrderDetailAdmin from "./pages/adminPage/orderDetailAdmin/orderDetailAdmin";
+import CategoryList from "./pages/adminPage/categoryList/categoryList";
+import CategoryDetail from "./pages/adminPage/categoryDetail/categoryDetail";
+import AddCategory from "./pages/adminPage/addCategory/addCategory";
 
 function renderUserRouter() {
     const userRouters = [
@@ -95,6 +98,18 @@ function renderUserRouter() {
         {
             path: ROUTERS.USER.ORDERDETAILADMIN,
             component: <OrderDetailAdmin />,
+        },
+        {
+            path: ROUTERS.USER.CATEGORYLIST,
+            component: <CategoryList />,
+        },
+        {
+            path: ROUTERS.USER.CATEGORYDETAIL,
+            component: <CategoryDetail />,
+        },
+        {
+            path: ROUTERS.USER.ADDCATEGORY,
+            component: <AddCategory />,
         }
     ];
     return (

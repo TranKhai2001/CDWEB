@@ -57,8 +57,30 @@ const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [productQuantities, setProductQuantities] = useState({});
     const [total, setTotal] = useState(0);
+    const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
     const shippingMoney = 10000;
+
+    useEffect(() => {
+        const fetchCurrentUser = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/check-login', {
+                    credentials: 'include'
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setCurrentUser(data);
+                } else {
+                    navigate('/dang-nhap');
+                }
+            } catch (error) {
+                console.error('Error fetching current user:', error);
+                navigate('/dang-nhap');
+            }
+        };
+
+        fetchCurrentUser();
+    }, [navigate]);
 
     useEffect(() => {
         const fetchCartDetails = async () => {
@@ -79,8 +101,10 @@ const Cart = () => {
             }
         };
 
-        fetchCartDetails();
-    }, []);
+        if (currentUser) {
+            fetchCartDetails();
+        }
+    }, [currentUser]);
 
     const calculateTotal = (items) => {
         const totalAmount = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
@@ -148,6 +172,10 @@ const Cart = () => {
             alert("Có lỗi xảy ra khi kiểm tra số lượng sản phẩm");
         }
     };
+
+    if (!currentUser) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <div className="container">

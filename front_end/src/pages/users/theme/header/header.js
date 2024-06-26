@@ -141,6 +141,11 @@ const Header = () => {
                             name: "Quản lý đơn hàng",
                             path:   ROUTERS.USER.LISTODER
                         }
+                        ,
+                        {
+                            name: "Quản lý danh mục sản phẩm",
+                            path:   ROUTERS.USER.CATEGORYLIST
+                        }
                     ]
                 }
             ]);
