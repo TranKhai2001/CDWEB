@@ -2,10 +2,7 @@ package com.example.bankend.service.implement;
 
 import com.example.bankend.dto.CartItemDTO;
 import com.example.bankend.dto.CartItemDetailDTO;
-import com.example.bankend.entity.Cart;
-import com.example.bankend.entity.CartItem;
-import com.example.bankend.entity.Product;
-import com.example.bankend.entity.User;
+import com.example.bankend.entity.*;
 import com.example.bankend.repository.CartItemRepository;
 import com.example.bankend.repository.CartRepository;
 import com.example.bankend.repository.ProductRepository;
@@ -45,7 +42,9 @@ public class CartServiceImpl implements CartService {
             cart = cartRepository.save(cart);
         }
 
-        Optional<Product> optionalProduct = productRepository.findById(cartItemDTO.getProductId());
+        Optional<Product> optionalProduct = productRepository.findByIdAndProductStatusAndCategoryStatus(
+                cartItemDTO.getProductId(), ProductStatus.ACTIVE, CategoryStatus.ACTIVE);
+
         if (optionalProduct.isPresent()) {
             Product product = optionalProduct.get();
 
@@ -67,7 +66,7 @@ public class CartServiceImpl implements CartService {
                 return cartItemRepository.save(cartItem);
             }
         } else {
-            throw new IllegalArgumentException("Product not found");
+            throw new IllegalArgumentException("Sản phẩm hoặc danh mục không hoạt động");
         }
     }
 
