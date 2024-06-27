@@ -54,7 +54,7 @@ const ListOrder = () => {
     }, [currentUser]);
 
     useEffect(() => {
-        const interval = setInterval(fetchOrders, 60000); // Fetch orders every 60 seconds
+        const interval = setInterval(fetchOrders, 10000); // Fetch orders every 60 seconds
         return () => clearInterval(interval); // Clean up the interval on component unmount
     }, []);
 

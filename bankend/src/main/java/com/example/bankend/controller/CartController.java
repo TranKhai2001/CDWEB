@@ -31,8 +31,12 @@ public class CartController {
     public ResponseEntity<String> addCartItem(@RequestBody CartItemDTO cartItemDTO, HttpSession session) {
         User user = (User) session.getAttribute("user");
         if (user != null) {
-            cartService.addCartItem(user, cartItemDTO);
-            return new ResponseEntity<>("Sản phẩm được thêm vào giỏ hàng thành công", HttpStatus.OK);
+            try {
+                cartService.addCartItem(user, cartItemDTO);
+                return new ResponseEntity<>("Sản phẩm được thêm vào giỏ hàng thành công", HttpStatus.OK);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            }
         } else {
             return new ResponseEntity<>("Người dùng chưa đăng nhập", HttpStatus.UNAUTHORIZED);
         }
